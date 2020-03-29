@@ -18,6 +18,7 @@ yarn add react-router-dom react-redux redux redux-saga axios
 
 ## TODO
 
+- Tester les sagas
 - Gérer le login et les routes privées côté react avec : https://reacttraining.com/react-router/web/example/auth-workflow
 - Créer un point d'api pour l'authentification
 - Vérifier que l'on peut appeler ensuite une api authentifiée
