@@ -1,0 +1,2 @@
+class WindTurbine < ApplicationRecord
+end

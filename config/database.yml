@@ -7,13 +7,12 @@ default: &default
 
 development:
   <<: *default
-  database: eolien_development
+  database: <%= ENV['DATABASE_NAME'] %>_development
 
 test:
   <<: *default
-  database: eolien_test
+  database: <%= ENV['DATABASE_NAME'] %>_test
 
 production:
   <<: *default
-  database: eolien_production
-  username: eolien
+  database: <%= ENV['DATABASE_NAME'] %>_production

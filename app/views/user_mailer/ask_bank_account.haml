@@ -1,0 +1,35 @@
+%p
+  Bonjour
+%p
+  Pour que nous puissions vous verser les sommes que nous vous devons (intérêts des obligations,
+  remboursement des obligations et dividendes) nous avons besoin de vos coordonnées bancaires.
+%p
+  Vous trouverez ci-dessous un lien pour accéder à une page de votre espace personnel qui vous
+  permettra de saisir vos coordonnées bancaires de manière sécurisée.
+%p
+  = link_to "Saisir mes coordonnées bancaires", edit_bank_account_url(user_username: @user.username, user_token: @user.authentication_token)
+%p
+  Ce lien vous permet de vous connecter à votre compte sans avoir besoin de connaître votre mot de passe pour faire la
+  mise à jour de vos coordonnées bancaires, ne le transmettez pas à un tiers.
+%p
+  Le compte concerné par ce mail est le suivant
+%ul
+  %li Nom : #{@user.firstname} #{@user.lastname}
+  %li Nom d'utilisateur : #{@user.username}
+%p
+  Si vous ne vous êtes jamais connecté à votre compte ou bien si vous ne vous souvenez pas de votre mot de passe vous
+  pouvez utiliser la page de réinitialisation pour recevoir par mail un lien pour définir un nouveau mot de passe
+%p
+  = link_to "Réinitialiser mon mot de passe", new_user_password_url
+%p
+  Si par la suite vos coordonnées bancaires changent vous pourrez retourner dans votre espace personnel
+  pour les modifier.
+%p
+  Vos coordonnées bancaires sont stockées de manière chiffrée dans notre base de données et ne seront
+  utilisées que pour le paiement des sommes que nous vous devons. Elles ne seront en aucun cas
+  communiquées à des tiers autre que notre banque pour faire le virement sur votre compte.
+%p
+  Cordialement
+  %br
+  Le conseil de direction
+

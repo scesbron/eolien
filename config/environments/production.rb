@@ -53,7 +53,21 @@ Rails.application.configure do
   # config.active_job.queue_adapter     = :resque
   # config.active_job.queue_name_prefix = "eolien_production"
 
-  config.action_mailer.perform_caching = false
+  config.action_mailer.default_url_options = { host: ENV['APP_HOST'], protocol: ENV['APP_SCHEME'] }
+  config.action_mailer.asset_host = "#{ENV['APP_SCHEME']}://#{ENV['APP_HOST']}"
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.smtp_settings = {
+    user_name: ENV['MAILER_LOGIN'],
+    password: ENV['MAILER_PASSWORD'],
+    domain: ENV['MAILER_DOMAIN'],
+    address: ENV['MAILER_ADDRESS'],
+    port: ENV['MAILER_PORT'],
+    authentication: ENV['MAILER_AUTH'],
+    enable_starttls_auto: ENV['MAILER_TLS']
+  }
+  # To be able to use *_url in jobs
+  routes.default_url_options = config.action_mailer.default_url_options
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
