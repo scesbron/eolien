@@ -6,12 +6,12 @@ const defaultResponse = {
   headers: {},
 };
 
-export const okResponse = <P>(data: P) => ({
+export const okResponse = (data) => ({
   ...defaultResponse,
   data,
 });
 
-export const errorResponse = (status: number, errors: string[]) => ({
+export const errorResponse = (status, errors) => ({
   status,
   response: {
     ...defaultResponse,

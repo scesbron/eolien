@@ -1,8 +1,7 @@
-import { AnyAction } from 'redux';
 import { put, call, takeLatest } from 'redux-saga/effects';
 
-import { User } from '../types';
 import * as api from '../api';
+import { getErrors } from './utils';
 
 // Constants
 
@@ -13,31 +12,32 @@ export const UPDATE = 'UPDATE';
 
 // Actions
 
-export const register = (user: User) => ({ type: REGISTER, payload: user });
+export const register = (user) => ({ type: REGISTER, payload: user });
 
-export const login = (email: string, password: string) => (
+export const login = (email, password) => (
   { type: LOGIN, payload: { email, password } }
 );
 
-export const updateUser = (user: User) => ({ type: UPDATE, payload: user });
-export const setErrors = (errors: string[]) => ({ type: SET_ERRORS, payload: errors });
+export const updateUser = (user) => ({ type: UPDATE, payload: user });
+export const setErrors = (errors) => ({ type: SET_ERRORS, payload: errors });
+
 // Sagas
 
-export function* registerSaga({ payload: user }: AnyAction) {
+export function* registerSaga({ payload: user }) {
   try {
     const response = yield call(api.users.create, user);
     yield put(updateUser(response.data));
   } catch (error) {
-    yield put(setErrors([error.message]));
+    yield put(setErrors(getErrors(error)));
   }
 }
 
-export function* loginSaga({ payload: { email, password } }: AnyAction) {
+export function* loginSaga({ payload: { email, password } }) {
   try {
     const response = yield call(api.session.create, email, password);
     yield put(updateUser(response.data));
   } catch (error) {
-    yield put(setErrors([error.message]));
+    yield put(setErrors(getErrors(error)));
   }
 }
 
@@ -49,18 +49,22 @@ export function* sagas() {
 // Reducers
 
 export const initialState = {
-  user: {},
+  loading: false,
+  current: undefined,
   errors: [],
 };
 
-export const reducer = (state = initialState, action: AnyAction) => {
+export const reducer = (state = initialState, action) => {
   const { payload } = action;
 
   switch (action.type) {
+    case REGISTER:
+    case LOGIN:
+      return { ...initialState, loading: true };
     case UPDATE:
-      return { ...state, user: payload };
+      return { ...initialState, current: payload };
     case SET_ERRORS:
-      return { ...state, errors: payload };
+      return { ...initialState, errors: payload };
     default:
       return state;
   }
