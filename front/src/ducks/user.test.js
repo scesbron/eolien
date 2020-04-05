@@ -8,12 +8,12 @@ import {
 import { errorResponse, okResponse } from '../tests/test-helpers';
 import { API_BASE_URL } from '../config';
 
-const email = 'john@doe.com';
+const username = 'jdoe';
 const password = 'password';
 const errors = ['error'];
-const user = { email, firstName: 'John', lastName: 'Doe' };
+const user = { username, firstName: 'John', lastName: 'Doe' };
 
-const loginAction = { type: LOGIN, payload: { email, password } };
+const loginAction = { type: LOGIN, payload: { username, password } };
 
 jest.mock('axios');
 
@@ -24,7 +24,7 @@ describe('users duck', () => {
 
   describe('actions', () => {
     it('returns the correct action for login', () => {
-      expect(login(email, password)).toEqual(loginAction);
+      expect(login(username, password)).toEqual(loginAction);
     });
   });
 
@@ -44,9 +44,9 @@ describe('users duck', () => {
         axios.post.mockResolvedValue(okResponse(user));
         await runSaga({
           dispatch: (action) => dispatched.push(action),
-        }, loginSaga, login(email, password));
+        }, loginSaga, login(username, password));
 
-        expect(axios.post).toHaveBeenCalledWith(`${API_BASE_URL}/login`, { user: { email, password } });
+        expect(axios.post).toHaveBeenCalledWith(`${API_BASE_URL}/login`, { user: { username, password } });
         expect(dispatched).toEqual([updateUser(user)]);
       });
 
@@ -55,9 +55,9 @@ describe('users duck', () => {
         axios.post.mockRejectedValue(errorResponse(422, errors));
         await runSaga({
           dispatch: (action) => dispatched.push(action),
-        }, loginSaga, login(email, password));
+        }, loginSaga, login(username, password));
 
-        expect(axios.post).toHaveBeenCalledWith(`${API_BASE_URL}/login`, { user: { email, password } });
+        expect(axios.post).toHaveBeenCalledWith(`${API_BASE_URL}/login`, { user: { username, password } });
         expect(dispatched).toEqual([setErrors(errors)]);
       });
 
@@ -66,9 +66,9 @@ describe('users duck', () => {
         axios.post.mockRejectedValue(new Error('Network error'));
         await runSaga({
           dispatch: (action) => dispatched.push(action),
-        }, loginSaga, login(email, password));
+        }, loginSaga, login(username, password));
 
-        expect(axios.post).toHaveBeenCalledWith(`${API_BASE_URL}/login`, { user: { email, password } });
+        expect(axios.post).toHaveBeenCalledWith(`${API_BASE_URL}/login`, { user: { username, password } });
         expect(dispatched).toEqual([setErrors(['Network error'])]);
       });
     });

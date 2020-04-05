@@ -7,5 +7,5 @@ export const users = {
 };
 
 export const session = {
-  create: (email, password) => axios.post(`${API_BASE_URL}/login`, { user: { email, password } }),
+  create: (username, password) => axios.post(`${API_BASE_URL}/login`, { user: { username, password } }),
 };

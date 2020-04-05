@@ -43,7 +43,7 @@ const Login = ({
   }, [user]);
 
   const onSubmit = useCallback((values) => {
-    login(values.email, values.password);
+    login(values.username, values.password);
   }, []);
 
   return (
@@ -57,7 +57,7 @@ const Login = ({
                 {errors.join('\n')}
               </Alert>
             )}
-            <TextField label="Email" name="email" required />
+            <TextField label="Username" name="username" required />
             <TextField label="Mot de passe" name="password" required />
             <Button type="submit" variant="contained" color="primary" className={classes.button} disabled={loading}>
               Connexion

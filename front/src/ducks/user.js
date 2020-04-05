@@ -14,8 +14,8 @@ export const UPDATE = 'UPDATE';
 
 export const register = (user) => ({ type: REGISTER, payload: user });
 
-export const login = (email, password) => (
-  { type: LOGIN, payload: { email, password } }
+export const login = (username, password) => (
+  { type: LOGIN, payload: { username, password } }
 );
 
 export const updateUser = (user) => ({ type: UPDATE, payload: user });
@@ -32,9 +32,9 @@ export function* registerSaga({ payload: user }) {
   }
 }
 
-export function* loginSaga({ payload: { email, password } }) {
+export function* loginSaga({ payload: { username, password } }) {
   try {
-    const response = yield call(api.session.create, email, password);
+    const response = yield call(api.session.create, username, password);
     yield put(updateUser(response.data));
   } catch (error) {
     yield put(setErrors(getErrors(error)));
