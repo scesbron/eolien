@@ -7,8 +7,8 @@ Devise.setup do |config|
   config.authentication_keys = [:username]
   config.case_insensitive_keys = [:username]
   config.strip_whitespace_keys = [:username]
-  config.reset_password_keys = [ :username ]
-  config.confirmation_keys = [ :username ]
+  config.reset_password_keys = [:username]
+  config.confirmation_keys = [:username]
   config.unlock_keys = [:username]
 
   config.skip_session_storage = [:http_auth]
@@ -22,7 +22,6 @@ Devise.setup do |config|
   config.password_length = 6..128
 
   config.email_regexp = /\A[^@\s]+@[^@\s]+\z/
-
 
   config.reset_password_within = 6.months
 
