@@ -1,25 +1,120 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
-  Switch, BrowserRouter as Router, Route,
+  Switch, Route, useHistory, useLocation,
 } from 'react-router-dom';
+import BottomNavigation from '@material-ui/core/BottomNavigation';
+import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
+import HomeIcon from '@material-ui/icons/Home';
+import PersonIcon from '@material-ui/icons/Person';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { makeStyles } from '@material-ui/core/styles';
 
 import PrivateRoute from './routes/private-route';
 import Login from './containers/login';
-import ProtectedApp from './containers/protected-app';
+import { User } from './types';
+import Home from './containers/home';
+import Profile from './containers/profile';
+import * as userDuck from './ducks/user';
 
-function App() {
+const navigationRoutes = [
+  { path: '/', value: 'home' },
+  { path: '/profil', value: 'profile' },
+  { path: '/logout', value: 'logout' },
+];
+
+const useStyles = makeStyles({
+  container: {
+    minHeight: '100%',
+  },
+  navigation: {
+    position: 'fixed',
+    bottom: 0,
+    left: 0,
+    right: 0,
+  },
+});
+
+const valueFromPath = (path) => (
+  (navigationRoutes.find((route) => route.path === path) || { value: 'home' }).value
+);
+
+const pathFromValue = (value) => (
+  navigationRoutes.find((route) => route.value === value).path
+);
+
+function App({ user, logout }) {
+  const classes = useStyles();
+  const history = useHistory();
+  const location = useLocation();
+
+  const navigateTo = useCallback((event, newValue) => {
+    if (newValue === 'logout') {
+      logout();
+    } else {
+      history.push(pathFromValue(newValue));
+    }
+  }, []);
   return (
-    <Router>
+    <div className={classes.container}>
       <Switch>
         <Route path="/login">
           <Login />
         </Route>
+        <PrivateRoute path="/profil">
+          <Profile />
+        </PrivateRoute>
         <PrivateRoute path="/">
-          <ProtectedApp />
+          <Home />
         </PrivateRoute>
       </Switch>
-    </Router>
+      {user && (
+        <BottomNavigation
+          value={valueFromPath(location.pathname)}
+          onChange={navigateTo}
+          showLabels
+          className={classes.navigation}
+        >
+          <BottomNavigationAction
+            to="/"
+            label="Accueil"
+            value="home"
+            icon={<HomeIcon />}
+          />
+          <BottomNavigationAction
+            to="/profil"
+            label="Profil"
+            value="profile"
+            icon={<PersonIcon />}
+          />
+          <BottomNavigationAction
+            to="/logout"
+            label="Déconnexion"
+            value="logout"
+            icon={<ExitToAppIcon />}
+          />
+        </BottomNavigation>
+      )}
+    </div>
   );
 }
 
-export default App;
+App.propTypes = {
+  user: User,
+  logout: PropTypes.func.isRequired,
+};
+
+App.defaultProps = {
+  user: undefined,
+};
+
+const mapStateToProps = (state) => ({
+  user: state.user.current,
+});
+
+const mapDispatchToProps = {
+  logout: userDuck.logout,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

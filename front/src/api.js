@@ -2,10 +2,22 @@ import axios from 'axios';
 
 import { API_BASE_URL } from './config';
 
-export const users = {
-  create: (user) => axios.post(`${API_BASE_URL}/users`, { body: { user } }),
+const AUTH_KEY = 'Authorization';
+
+export const user = {
+  get: () => axios.get(`${API_BASE_URL}/user`),
 };
 
 export const session = {
   create: (username, password) => axios.post(`${API_BASE_URL}/login`, { user: { username, password } }),
+  delete: () => axios.delete(`${API_BASE_URL}/logout`),
+};
+
+export const setAuthorization = (authorization) => {
+  sessionStorage.setItem(AUTH_KEY, authorization);
+  axios.defaults.headers.common.Authorization = authorization;
+};
+
+export const initAuthorization = () => {
+  axios.defaults.headers.common.Authorization = sessionStorage.getItem(AUTH_KEY);
 };
