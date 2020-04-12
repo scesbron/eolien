@@ -13,7 +13,7 @@ gem 'devise'
 gem 'devise-jwt'
 gem 'rack-cors'
 gem 'typhoeus'
-
+gem 'attr_encrypted'
 
 gem 'capistrano'
 gem 'capistrano-rails'

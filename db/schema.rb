@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_01_070611) do
+ActiveRecord::Schema.define(version: 2020_04_12_075543) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -32,15 +32,20 @@ ActiveRecord::Schema.define(version: 2020_04_01_070611) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "legal_name"
+    t.string "address"
+    t.string "phone"
+    t.string "email"
+    t.string "legal_agent"
   end
 
   create_table "daily_data", id: :serial, force: :cascade do |t|
-    t.date "day"
+    t.date "day", null: false
     t.integer "wind_turbine_id"
-    t.float "production"
-    t.float "consumption"
-    t.float "disponibility"
-    t.float "wind_speed"
+    t.float "production", null: false
+    t.float "consumption", null: false
+    t.float "disponibility", null: false
+    t.float "wind_speed", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["wind_turbine_id"], name: "index_daily_data_on_wind_turbine_id"
@@ -52,12 +57,50 @@ ActiveRecord::Schema.define(version: 2020_04_01_070611) do
     t.index ["jti"], name: "index_jwt_blacklist_on_jti"
   end
 
+  create_table "loans", force: :cascade do |t|
+    t.string "name", null: false
+    t.float "amount", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["name"], name: "index_loans_on_name", unique: true
+  end
+
   create_table "productibles", id: :serial, force: :cascade do |t|
     t.integer "month"
     t.string "name"
     t.float "value"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "shares", force: :cascade do |t|
+    t.string "name", null: false
+    t.float "amount", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["name"], name: "index_shares_on_name", unique: true
+  end
+
+  create_table "user_loans", force: :cascade do |t|
+    t.date "date", null: false
+    t.integer "quantity", null: false
+    t.bigint "loan_id", null: false
+    t.bigint "user_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["loan_id"], name: "index_user_loans_on_loan_id"
+    t.index ["user_id"], name: "index_user_loans_on_user_id"
+  end
+
+  create_table "user_shares", force: :cascade do |t|
+    t.date "date", null: false
+    t.integer "quantity", null: false
+    t.bigint "share_id", null: false
+    t.bigint "user_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["share_id"], name: "index_user_shares_on_share_id"
+    t.index ["user_id"], name: "index_user_shares_on_user_id"
   end
 
   create_table "users", id: :serial, force: :cascade do |t|
@@ -114,5 +157,9 @@ ActiveRecord::Schema.define(version: 2020_04_01_070611) do
 
   add_foreign_key "bank_accounts", "users"
   add_foreign_key "daily_data", "wind_turbines"
+  add_foreign_key "user_loans", "loans"
+  add_foreign_key "user_loans", "users"
+  add_foreign_key "user_shares", "shares"
+  add_foreign_key "user_shares", "users"
   add_foreign_key "users", "companies"
 end

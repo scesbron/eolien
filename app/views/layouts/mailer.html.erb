@@ -233,13 +233,29 @@
                             <tr>
                               <td valign="top">
                                 <div style="font-family:Helvetica,Arial,sans-serif;font-size:13px;color:#828282;text-align:center;line-height:120%;">
-                                  <% if @user&.eolien? %>
-                                    <div>S.A. Eo-Lien - Soci&eacute;t&eacute; Anonyme au capital de 571 000 &euro; - RCS Angers 803 505 528</div>
-                                    <div>11 rue de Bel Air - 49750 Chanzeaux - <a href="mailto:contact@eo-lien.fr" style="text-decoration:none;color:#828282;"><span style="color:#828282;">contact@eo-lien.fr</span></a></div>
-                                    <div>Maxence Gu&eacute;rin 06.13.16.17.86</div>
-                                  <% elsif @user&.seve? %>
-                                    <div>S.A.S. SEVE - Société par Actions Simplifiée au capital de 429 000 € - RCS Angers 794 787 119</div>
-                                    <div>La Confordière - 49120 La Tourlandry - François Girard 06.80.63.06.54</div>
+                                  <% if @user&.company&.legal_name %>
+                                    <div><%= @user.company.legal_name %></div>
+                                  <% end %>
+                                  <% if @user&.company&.address || @user&.company&.email %>
+                                    <div>
+                                      <% if @user&.company&.address %>
+                                        <%= @user.company.address %>
+                                      <% end %>
+                                      <% if @user&.company&.address && @user&.company&.email %>
+                                      <%= ' - ' %>
+                                      <% end %>
+                                      <% if @user&.company&.email %>
+                                        <%= link_to @user.company.email, "mailto:#{@user.company.email}", style: "text-decoration:none;color:#828282;" do %>
+                                          <span style="color:#828282;"><%= @use.company.email %></span>
+                                        <% end %>
+                                      <% end %>
+                                      <% if @user&.company&.legal_agent %>
+                                        <%= @user.company.legal_agent %>
+                                        <% if @user&.company&.phone %>
+                                          <%= " #{@user.company.phone}" %>
+                                        <% end %>
+                                      <% end %>
+                                    </div>
                                   <% end %>
                                 </div>
                               </td>

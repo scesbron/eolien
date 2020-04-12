@@ -1,7 +1,8 @@
 class BankAccount < ApplicationRecord
-  attr_encrypted :bank_name, key: '38aa859ab0d7e6d93f1cbfbcb3afdf98'
-  attr_encrypted :bic, key: '38aa859ab0d7e6d93f1cbfbcb3afdf98'
-  attr_encrypted :iban, key: '38aa859ab0d7e6d93f1cbfbcb3afdf98'
+  include Encryption
+  attr_encrypted :bank_name, key: encryption_key
+  attr_encrypted :bic, key: encryption_key
+  attr_encrypted :iban, key: encryption_key
 
   validates :bank_name, :bic, :iban, presence: true
   validates :iban, bank_iban: true

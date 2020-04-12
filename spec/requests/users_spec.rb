@@ -23,7 +23,6 @@ RSpec.describe 'GET /user', type: :request do
       expect(response).to have_http_status(200)
     end
     it 'returns the correct json' do
-      print json
       expect(json['firstname']).to eq(user.firstname)
       expect(json['lastname']).to eq(user.lastname)
       expect(json['email']).to eq(user.email)

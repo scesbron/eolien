@@ -4,11 +4,13 @@ class User < ApplicationRecord
          :jwt_authenticatable,
          jwt_revocation_strategy: JwtBlacklist
 
-  validates :firstname, presence: true
+  validates :firstname, :lastname, :email, presence: true
   validates :username, presence: true, uniqueness: { case_sensitive: false }
 
   belongs_to :company
   has_one :bank_account
+  has_many :shares, class_name: 'UserShare'
+  has_many :loans, class_name: 'UserLoan'
 
   # You likely have this before callback set up for the token.
   before_save :ensure_authentication_token
@@ -30,14 +32,6 @@ class User < ApplicationRecord
 
   def admin?
     role == 'admin'
-  end
-
-  def eolien?
-    company_id == Company::EO_LIEN
-  end
-
-  def seve?
-    company_id == Company::SEVE
   end
 
   def full_name
