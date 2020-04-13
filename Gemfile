@@ -14,6 +14,7 @@ gem 'devise-jwt'
 gem 'rack-cors'
 gem 'typhoeus'
 gem 'attr_encrypted'
+gem 'active_model_serializers'
 
 gem 'capistrano'
 gem 'capistrano-rails'

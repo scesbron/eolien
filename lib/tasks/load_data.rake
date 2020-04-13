@@ -7,6 +7,7 @@ namespace :load_data do
     csv_text = File.read("#{Rails.root}/data/citeole.csv")
     csv = CSV.parse(csv_text, headers: true, col_sep: ',')
     share_amount = 200
+    shareholder_number = 1
     citeole = Company.find_or_create_by(name: 'Cit\'Eole Hyrôme')
     loan = Loan.find_or_create_by(name: 'Compte courant d\'associé', amount: share_amount * 4, company: citeole)
     share = Share.find_or_create_by(name: 'Action', amount: share_amount, company: citeole)
@@ -26,8 +27,10 @@ namespace :load_data do
         address: row['address'],
         additional_address: row['additional_address'],
         zip_code: row['zip_code'],
-        city: row['city']
+        city: row['city'],
+        shareholder_number: shareholder_number
       )
+      shareholder_number += 1
       if user.valid?
         user.save!
         if row['first_share']
