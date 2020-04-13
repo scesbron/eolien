@@ -7,7 +7,7 @@
 # server "example.com", user: "deploy", roles: %w{app web}, other_property: :other_value
 # server "db.example.com", user: "deploy", roles: %w{db}
 server 'ct-hyrome', user: 'deploy', roles: %w[app db web]
-
+set :stage, :production
 
 # role-based syntax
 # ==================
