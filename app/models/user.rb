@@ -1,10 +1,10 @@
 class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable, :trackable,
+         :recoverable, :rememberable, :trackable,
          :jwt_authenticatable,
          jwt_revocation_strategy: JwtBlacklist
 
-  validates :firstname, :lastname, :email, presence: true
+  validates :firstname, :lastname, :email, :password, presence: true
   validates :username, presence: true, uniqueness: { case_sensitive: false }
 
   belongs_to :company

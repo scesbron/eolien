@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_12_075543) do
+ActiveRecord::Schema.define(version: 2020_04_12_083926) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -60,8 +60,10 @@ ActiveRecord::Schema.define(version: 2020_04_12_075543) do
   create_table "loans", force: :cascade do |t|
     t.string "name", null: false
     t.float "amount", null: false
+    t.bigint "company_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["company_id"], name: "index_loans_on_company_id"
     t.index ["name"], name: "index_loans_on_name", unique: true
   end
 
@@ -76,8 +78,10 @@ ActiveRecord::Schema.define(version: 2020_04_12_075543) do
   create_table "shares", force: :cascade do |t|
     t.string "name", null: false
     t.float "amount", null: false
+    t.bigint "company_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["company_id"], name: "index_shares_on_company_id"
     t.index ["name"], name: "index_shares_on_name", unique: true
   end
 
@@ -119,7 +123,7 @@ ActiveRecord::Schema.define(version: 2020_04_12_075543) do
     t.string "address"
     t.string "zip_code", limit: 5
     t.string "city"
-    t.string "phone", limit: 20
+    t.string "phone", limit: 25
     t.string "email", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -157,6 +161,8 @@ ActiveRecord::Schema.define(version: 2020_04_12_075543) do
 
   add_foreign_key "bank_accounts", "users"
   add_foreign_key "daily_data", "wind_turbines"
+  add_foreign_key "loans", "companies"
+  add_foreign_key "shares", "companies"
   add_foreign_key "user_loans", "loans"
   add_foreign_key "user_loans", "users"
   add_foreign_key "user_shares", "shares"

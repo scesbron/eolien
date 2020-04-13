@@ -5,6 +5,10 @@ RSpec.describe User, type: :model do
   it 'is valid with valid attributes' do
     expect(User.new(firstname: 'John', lastname: 'Doe', email: 'john@doe.com', username: 'jdoe', company: company, password: 'password')).to be_valid
   end
+  it 'is valid with valid email already taken' do
+    create(:user, email: 'john@doe.com')
+    expect(User.new(firstname: 'John', lastname: 'Doe', email: 'john@doe.com', username: 'jdoe', company: company, password: 'password')).to be_valid
+  end
   it 'is not valid without a firstname' do
     expect(User.new(firstname: nil, lastname: 'Doe', email: 'john@doe.com', username: 'jdoe', company: company, password: 'password')).not_to be_valid
   end
@@ -16,6 +20,10 @@ RSpec.describe User, type: :model do
   end
   it 'is not valid without a username' do
     expect(User.new(firstname: 'John', lastname: 'Doe', email: 'john@doe.com', username: nil, company: company, password: 'password')).not_to be_valid
+  end
+  it 'is not valid with a username already taken' do
+    create(:user, username: 'jdoe');
+    expect(User.new(firstname: 'John', lastname: 'Doe', email: 'john@doe.com', username: 'jdoe', company: company, password: 'password')).not_to be_valid
   end
   it 'is not valid without a company' do
     expect(User.new(firstname: 'John', lastname: 'Doe', email: 'john@doe.com', username: 'jdoe', company: nil, password: 'password')).not_to be_valid
