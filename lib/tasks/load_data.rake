@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'csv'
 namespace :load_data do
   desc "Load Cit'Eole"
@@ -28,17 +30,17 @@ namespace :load_data do
       )
       if user.valid?
         user.save!
-        if (row['first_share'])
+        if row['first_share']
           quantity = row['first_share'].to_i / share_amount
           UserShare.create!(user: user, share: share, date: first_date, quantity: quantity)
           UserLoan.create!(user: user, loan: loan, date: first_date, quantity: quantity)
         end
-        if (row['second_share'])
+        if row['second_share']
           quantity = row['second_share'].to_i / share_amount
           UserShare.create!(user: user, share: share, date: second_date, quantity: quantity)
           UserLoan.create!(user: user, loan: loan, date: second_date, quantity: quantity)
         end
-        if (row['third_share'])
+        if row['third_share']
           quantity = row['third_share'].to_i / share_amount
           UserShare.create!(user: user, share: share, date: third_date, quantity: quantity)
           UserLoan.create!(user: user, loan: loan, date: third_date, quantity: quantity)
@@ -49,7 +51,7 @@ namespace :load_data do
     end
   end
 
-  desc "Load eo-lien"
+  desc 'Load eo-lien'
   task eo_lien: :environment do
     csv_text = File.read("#{Rails.root}/data/eolien.csv")
     csv = CSV.parse(csv_text, headers: true, col_sep: ';')
@@ -64,7 +66,7 @@ namespace :load_data do
     end
   end
 
-  desc "Load SEVE"
+  desc 'Load SEVE'
   task seve: :environment do
     csv_text = File.read("#{Rails.root}/data/seve.csv")
     csv = CSV.parse(csv_text, headers: true, col_sep: ';')
@@ -87,11 +89,11 @@ namespace :load_data do
       user = User.find_by(company: company, shareholder_number: row['number'])
       if user
         user.update(
-            start_up_actions: (row['initial'] || 0).to_i,
-            first_round_actions: (row['first'] || 0).to_i,
-            first_round_obligations: (row['first'] || 0).to_i * 11,
-            second_round_actions: (row['second'] || 0).to_i,
-            second_round_obligations: (row['second'] || 0).to_i * 11
+          start_up_actions: (row['initial'] || 0).to_i,
+          first_round_actions: (row['first'] || 0).to_i,
+          first_round_obligations: (row['first'] || 0).to_i * 11,
+          second_round_actions: (row['second'] || 0).to_i,
+          second_round_obligations: (row['second'] || 0).to_i * 11
         )
       else
         puts "Unknown user : #{row['number']}"
