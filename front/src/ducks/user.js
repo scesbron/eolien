@@ -3,6 +3,7 @@ import { put, call, takeLatest } from 'redux-saga/effects';
 import * as api from '../api';
 import { getErrors } from './utils';
 import { setAuthorization } from '../api';
+import { parseApiDate } from '../utils/date';
 
 // Constants
 
@@ -71,6 +72,19 @@ export const initialState = {
   errors: [],
 };
 
+const convert = (user) => (!user ? undefined : {
+  ...user,
+  birthDate: parseApiDate(user.birthDate),
+  loans: user.loans.map((loan) => ({
+    ...loan,
+    date: parseApiDate(loan.date),
+  })),
+  shares: user.shares.map((share) => ({
+    ...share,
+    date: parseApiDate(share.date),
+  })),
+});
+
 export const reducer = (state = initialState, action) => {
   const { payload } = action;
 
@@ -82,13 +96,13 @@ export const reducer = (state = initialState, action) => {
     case LOGIN:
       return { ...state, loading: true };
     case UPDATE:
-      return { ...state, current: payload, errors: [] };
+      return { ...state, current: convert(payload), errors: [] };
     case INITIALIZED:
       return {
         ...state,
         initializing: false,
         initialized: true,
-        current: payload,
+        current: convert(payload),
       };
     case SET_ERRORS:
       return { ...state, current: undefined, errors: payload };
