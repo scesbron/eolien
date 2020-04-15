@@ -58,7 +58,7 @@ const Login = ({
               </Alert>
             )}
             <TextField label="Username" name="username" required />
-            <TextField label="Mot de passe" name="password" required />
+            <TextField label="Mot de passe" type="password" name="password" required />
             <Button type="submit" variant="contained" color="primary" className={classes.button} disabled={loading}>
               Connexion
             </Button>
