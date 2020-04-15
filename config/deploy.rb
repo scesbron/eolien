@@ -13,3 +13,11 @@ task :build_front do
     execute './bin/build_front'
   end
 end
+
+namespace :deploy do
+  after :restart, :build_front do
+    on roles(:web), in: :groups, limit: 3, wait: 10 do
+      execute './bin/build_front'
+    end
+  end
+end

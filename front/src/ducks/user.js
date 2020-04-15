@@ -30,6 +30,7 @@ export const initialized = (user) => ({ type: INITIALIZED, payload: user });
 export function* logoutSaga() {
   try {
     yield call(api.session.delete);
+    setAuthorization();
     yield put(updateUser());
   } catch (error) {
     yield put(setErrors(getErrors(error)));
@@ -96,7 +97,7 @@ export const reducer = (state = initialState, action) => {
     case LOGIN:
       return { ...state, loading: true };
     case UPDATE:
-      return { ...state, current: convert(payload), errors: [] };
+      return { ...state, loading: false, current: convert(payload), errors: [] };
     case INITIALIZED:
       return {
         ...state,
@@ -105,7 +106,7 @@ export const reducer = (state = initialState, action) => {
         current: convert(payload),
       };
     case SET_ERRORS:
-      return { ...state, current: undefined, errors: payload };
+      return { ...state, loading: false, current: undefined, errors: payload };
     default:
       return state;
   }

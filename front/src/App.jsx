@@ -58,7 +58,8 @@ function App({ user, logout }) {
     } else {
       history.push(pathFromValue(newValue));
     }
-  }, []);
+  }, [history, logout]);
+
   return (
     <div className={classes.container}>
       <Switch>

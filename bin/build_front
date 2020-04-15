@@ -3,5 +3,5 @@ cd front
 yarn
 yarn build
 cd build
-mv * /home/deploy/eolien/shared/public/
+cp -R * /home/deploy/eolien/shared/public/
 cd ..

@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 
-RSpec.describe 'GET /user', type: :request do
+RSpec.describe 'GET /api/user', type: :request do
   let(:user) { create(:user, birth_date: Date.today) }
-  let(:url) { '/user' }
+  let(:url) { '/api/user' }
 
 
   context 'when user is not authenticated' do

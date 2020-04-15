@@ -5,9 +5,9 @@ def decoded_jwt_token_from_response(response)
   JWT.decode(token_from_request, ENV['DEVISE_JWT_SECRET_KEY'], true)
 end
 
-RSpec.describe 'POST /login', type: :request do
+RSpec.describe 'POST /api/login', type: :request do
   let(:user) { create(:user) }
-  let(:url) { '/login' }
+  let(:url) { '/api/login' }
   let(:params) do
     {
       user: {
@@ -45,8 +45,8 @@ RSpec.describe 'POST /login', type: :request do
   end
 end
 
-RSpec.describe 'DELETE /logout', type: :request do
-  let(:url) { '/logout' }
+RSpec.describe 'DELETE /api/logout', type: :request do
+  let(:url) { '/api/logout' }
 
   it 'returns 204, no content' do
     delete url

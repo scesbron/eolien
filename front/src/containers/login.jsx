@@ -40,11 +40,11 @@ const Login = ({
       const { from } = location.state || { from: { pathname: '/' } };
       history.replace(from);
     }
-  }, [user]);
+  }, [user, history, location]);
 
   const onSubmit = useCallback((values) => {
     login(values.username, values.password);
-  }, []);
+  }, [login]);
 
   return (
     <div className={classes.container}>

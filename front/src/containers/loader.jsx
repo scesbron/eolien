@@ -9,7 +9,8 @@ const Loader = ({
 }) => {
   useEffect(() => {
     if (!initialized && !initializing) load();
-  }, [initialized, initializing]);
+  }, [initialized, initializing, load]);
+
   return (initializing || !initialized) ? (
     <div>Loading...</div>
   ) : (
