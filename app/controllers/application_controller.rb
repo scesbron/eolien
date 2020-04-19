@@ -2,16 +2,16 @@
 
 class ApplicationController < ActionController::API
   def render_resource(resource)
-    if resource.errors.empty?
-      render json: resource
-    else
+    if resource.respond_to?(:errors) && resource.errors.any?
       validation_error(resource)
+    else
+      render json: resource
     end
   end
 
   def validation_error(resource)
     render json: {
-      errors: resource.errors
+      errors: resource.errors.to_a
     }, status: :bad_request
   end
 end

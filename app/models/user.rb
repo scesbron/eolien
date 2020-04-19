@@ -5,6 +5,7 @@ class User < ApplicationRecord
          jwt_revocation_strategy: JwtBlacklist
 
   validates :firstname, :lastname, :email, :password, presence: true
+  validates :password, length: { in: 6..128, allow_blank: true }
   validates :username, presence: true, uniqueness: { case_sensitive: false }
 
   belongs_to :company

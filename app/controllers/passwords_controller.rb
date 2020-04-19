@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class SessionsController < Devise::SessionsController
+class PasswordsController < Devise::PasswordsController
   respond_to :json
 
   private

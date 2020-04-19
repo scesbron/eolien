@@ -1,0 +1,6 @@
+fr:
+  activerecord:
+    attributes:
+      user:
+        reset_password_token: Le jeton d'authentification
+        password: Le mot de passe

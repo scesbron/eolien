@@ -3,12 +3,11 @@ Rails.application.routes.draw do
              path: 'api',
              path_names: {
                sign_in: 'login',
-               sign_out: 'logout',
-               registration: 'signup'
+               sign_out: 'logout'
              },
              controllers: {
                sessions: 'sessions',
-               registrations: 'registrations'
+               passwords: 'passwords'
              }
   namespace :api, defaults: { format: :json } do
     resource :user, only: [:show, :update]
