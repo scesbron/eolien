@@ -12,15 +12,6 @@ class User < ApplicationRecord
   has_many :shares, class_name: 'UserShare'
   has_many :loans, class_name: 'UserLoan'
 
-  # You likely have this before callback set up for the token.
-  before_save :ensure_authentication_token
-
-  def ensure_authentication_token
-    if authentication_token.blank?
-      self.authentication_token = generate_authentication_token
-    end
-  end
-
   # We override this method to avoid email uniqueness validation
   def email_required?
     false
@@ -48,15 +39,6 @@ class User < ApplicationRecord
       where(conditions).first
     else
       where(username: conditions[:username]).first
-    end
-  end
-
-  private
-
-  def generate_authentication_token
-    loop do
-      token = Devise.friendly_token
-      break token unless User.where(authentication_token: token).first
     end
   end
 end

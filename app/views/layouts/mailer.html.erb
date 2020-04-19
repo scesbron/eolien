@@ -149,14 +149,16 @@
                             <tbody>
                             <tr>
                               <td align="left" valign="top">
-                                <span class="sg-image">
-                                  <%= image_tag('jacterie-logo-petit.png') %>
-                                </span>
+                                <% if @user&.company&.wind_farm %>
+                                  <span class="sg-image">
+                                    <%= image_tag("#{@user.company.wind_farm.slug}.png", style: 'height: 100px') %>
+                                  </span>
+                                <% end %>
                               </td>
                               <td align="right" valign="top">
                                 <% if @user&.company %>
                                 <span class="sg-image">
-                                  <%= image_tag("#{@user.company.name.downcase}.png") %>
+                                  <%= image_tag("#{@user.company.slug}.png", style: 'height: 100px') %>
                                 </span>
                                 <% end %>
                               </td>

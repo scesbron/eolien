@@ -1,32 +1,27 @@
 %p
-  Bonjour
+  Bonjour #{@user.firstname},
 %p
-  Tous les actionnaires du parc de la Jacterie ont accès à une application qui leur permet
+  Tous les actionnaires de la société #{@user.company.name} ont accès à une application qui leur permet
 %ul
   %li De suivre en temps réel la production du parc
   %li De voir l'historique de la production du parc par mois et par année
   %li De modifier leurs coordonnées
+  %li De voir le montant de leur investissement
 %p
   Pour accéder à cette application vous avez un nom d'utilisateur : <strong>#{@user.username}</strong>
 %p
   Avec ce nom d'utilisateur et votre mot de passe vous pouvez vous connecter à l'application en allant sur le site
-  = link_to root_url, root_url
+  = link_to APP_URL, APP_URL
 %p
   Si vous ne vous êtes jamais connecté à l'application ou si vous avez oublié votre mot de passe vous pouvez demander à le
   réinitialiser en
-  = link_to 'cliquant ici', new_password_url(User)
+  = link_to 'cliquant ici', "#{APP_URL}/mot-de-passe-oublié"
   et en indiquant votre nom d'utilisateur puis en cliquant sur le bouton "Envoyez-moi les instructions de réinitialisation".
-%p
-  Vous pouvez également vous connecter à l'application avec votre compte utilisateur sans indiquer votre mot de passe
-  en utilisant le lien ci-dessous. Veillez bien à ne pas diffuser ce lien à d'autres personnes car toute personne en
-  possession de ce lien peut se connecter à votre compte.
-%p
-  = link_to "Accéder à l'application de suivi du parc", root_url(user_username: @user.username, user_token: @user.authentication_token)
 %p
   Si vous avez des difficultés à vous connecter à l'application vous pouvez nous contacter en nous envoyant un mail à l'adresse
   = link_to 'contact@eo-lien.fr', 'mailto:contact@eo-lien.fr'
 %p
   Cordialement
   %br
-  Le conseil de direction
+  #{@user.company.name}
 

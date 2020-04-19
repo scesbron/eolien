@@ -17,7 +17,7 @@ end
 namespace :deploy do
   after :restart, :build_front do
     on roles(:web), in: :groups, limit: 3, wait: 10 do
-      execute './bin/build_front'
+      execute 'cd eolien/current && ./bin/build_front'
     end
   end
 end

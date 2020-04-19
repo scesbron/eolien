@@ -1,0 +1,1 @@
+APP_URL = "#{ENV['APP_SCHEME']}://#{ENV['APP_HOST']}"

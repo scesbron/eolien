@@ -12,6 +12,7 @@ gem 'dotenv-rails'
 gem 'devise'
 gem 'devise-jwt'
 gem 'rack-cors'
+gem 'haml-rails'
 gem 'typhoeus'
 gem 'attr_encrypted'
 gem 'active_model_serializers'
@@ -25,6 +26,7 @@ group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   gem 'rspec-rails'
   gem 'factory_bot_rails'
+  gem 'letter_opener'
 end
 
 group :development do

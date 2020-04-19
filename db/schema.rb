@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_12_083926) do
+ActiveRecord::Schema.define(version: 2020_04_19_092007) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -37,6 +37,10 @@ ActiveRecord::Schema.define(version: 2020_04_12_083926) do
     t.string "phone"
     t.string "email"
     t.string "legal_agent"
+    t.bigint "wind_farm_id"
+    t.string "slug"
+    t.index ["slug"], name: "index_companies_on_slug", unique: true
+    t.index ["wind_farm_id"], name: "index_companies_on_wind_farm_id"
   end
 
   create_table "daily_data", id: :serial, force: :cascade do |t|
@@ -152,14 +156,26 @@ ActiveRecord::Schema.define(version: 2020_04_12_083926) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  create_table "wind_farms", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "slug", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["name"], name: "index_wind_farms_on_name", unique: true
+    t.index ["slug"], name: "index_wind_farms_on_slug", unique: true
+  end
+
   create_table "wind_turbines", id: :serial, force: :cascade do |t|
     t.string "name"
     t.string "reference"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "wind_farm_id"
+    t.index ["wind_farm_id"], name: "index_wind_turbines_on_wind_farm_id"
   end
 
   add_foreign_key "bank_accounts", "users"
+  add_foreign_key "companies", "wind_farms"
   add_foreign_key "daily_data", "wind_turbines"
   add_foreign_key "loans", "companies"
   add_foreign_key "shares", "companies"
@@ -168,4 +184,5 @@ ActiveRecord::Schema.define(version: 2020_04_12_083926) do
   add_foreign_key "user_shares", "shares"
   add_foreign_key "user_shares", "users"
   add_foreign_key "users", "companies"
+  add_foreign_key "wind_turbines", "wind_farms"
 end
