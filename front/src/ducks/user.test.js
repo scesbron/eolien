@@ -1,20 +1,7 @@
 import { runSaga } from 'redux-saga';
 import axios from 'axios';
 
-import {
-  login,
-  logout,
-  loginSaga,
-  logoutSaga,
-  updateUser,
-  setErrors,
-  LOGIN,
-  reducer,
-  initialState,
-  LOGOUT,
-  INITIALIZED,
-  load, LOAD, initialized, loadSaga,
-} from './user';
+import * as duck from './user';
 import { errorResponse, okResponse } from '../tests/test-helpers';
 import { API_BASE_URL } from '../config';
 
@@ -23,11 +10,6 @@ const password = 'password';
 const errors = ['error'];
 const user = { username, firstName: 'John', lastName: 'Doe' };
 
-const loginAction = { type: LOGIN, payload: { username, password } };
-const logoutAction = { type: LOGOUT };
-const loadAction = { type: LOAD };
-const initializedAction = (payload) => ({ type: INITIALIZED, payload });
-
 jest.mock('axios');
 
 describe('users duck', () => {
@@ -35,52 +17,38 @@ describe('users duck', () => {
     axios.post.mockClear();
   });
 
-  describe('actions', () => {
-    it('returns the correct action for login', () => {
-      expect(login(username, password)).toEqual(loginAction);
-    });
-    it('returns the correct action for logout', () => {
-      expect(logout(username, password)).toEqual(logoutAction);
-    });
-    it('returns the correct action for load', () => {
-      expect(load()).toEqual(loadAction);
-    });
-    it('returns the correct action for initialized without user', () => {
-      expect(initialized()).toEqual(initializedAction());
-    });
-    it('returns the correct action for initialized with user', () => {
-      expect(initialized(user)).toEqual(initializedAction(user));
-    });
-  });
-
   describe('reducers', () => {
     it('handles LOGIN action', () => {
-      expect(reducer(initialState, loginAction)).toEqual({
-        ...initialState,
+      expect(duck.reducer(duck.initialState, duck.login(username, password))).toEqual({
+        ...duck.initialState,
         loading: true,
       });
     });
     it('handles LOGOUT action', () => {
-      expect(reducer({
-        ...initialState,
+      expect(duck.reducer({
+        ...duck.initialState,
         current: user,
-      }, logoutAction)).toEqual(initialState);
+      }, duck.logout(username, password))).toEqual(duck.initialState);
     });
     it('handles LOAD action', () => {
-      expect(reducer(initialState, loadAction)).toEqual({
-        ...initialState,
+      expect(duck.reducer(duck.initialState, duck.load())).toEqual({
+        ...duck.initialState,
         initializing: true,
       });
     });
     it('handles INITIALIZED action without user', () => {
-      expect(reducer(reducer(initialState, loadAction), initializedAction())).toEqual({
-        ...initialState,
+      expect(
+        duck.reducer(duck.reducer(duck.initialState, duck.load()), duck.initialized()),
+      ).toEqual({
+        ...duck.initialState,
         initialized: true,
       });
     });
     it('handles INITIALIZED action with user', () => {
-      expect(reducer(reducer(initialState, loadAction), initializedAction(user))).toEqual({
-        ...initialState,
+      expect(
+        duck.reducer(duck.reducer(duck.initialState, duck.load()), duck.initialized(user)),
+      ).toEqual({
+        ...duck.initialState,
         initialized: true,
         current: user,
       });
@@ -94,10 +62,10 @@ describe('users duck', () => {
         axios.post.mockResolvedValue(okResponse(user));
         await runSaga({
           dispatch: (action) => dispatched.push(action),
-        }, loginSaga, login(username, password));
+        }, duck.loginSaga, duck.login(username, password));
 
         expect(axios.post).toHaveBeenCalledWith(`${API_BASE_URL}/login`, { user: { username, password } });
-        expect(dispatched).toEqual([updateUser(user)]);
+        expect(dispatched).toEqual([duck.updateUser(user)]);
       });
 
       it('should call api and dispatch error action from response error', async () => {
@@ -105,10 +73,10 @@ describe('users duck', () => {
         axios.post.mockRejectedValue(errorResponse(422, errors));
         await runSaga({
           dispatch: (action) => dispatched.push(action),
-        }, loginSaga, login(username, password));
+        }, duck.loginSaga, duck.login(username, password));
 
         expect(axios.post).toHaveBeenCalledWith(`${API_BASE_URL}/login`, { user: { username, password } });
-        expect(dispatched).toEqual([setErrors(errors)]);
+        expect(dispatched).toEqual([duck.setErrors(errors)]);
       });
 
       it('should call api and dispatch error action from network error', async () => {
@@ -116,10 +84,10 @@ describe('users duck', () => {
         axios.post.mockRejectedValue(new Error('Network error'));
         await runSaga({
           dispatch: (action) => dispatched.push(action),
-        }, loginSaga, login(username, password));
+        }, duck.loginSaga, duck.login(username, password));
 
         expect(axios.post).toHaveBeenCalledWith(`${API_BASE_URL}/login`, { user: { username, password } });
-        expect(dispatched).toEqual([setErrors(['Network error'])]);
+        expect(dispatched).toEqual([duck.setErrors(['Network error'])]);
       });
     });
 
@@ -129,10 +97,10 @@ describe('users duck', () => {
         axios.delete.mockResolvedValue(okResponse());
         await runSaga({
           dispatch: (action) => dispatched.push(action),
-        }, logoutSaga, logout(user));
+        }, duck.logoutSaga, duck.logout(user));
 
         expect(axios.delete).toHaveBeenCalledWith(`${API_BASE_URL}/logout`);
-        expect(dispatched).toEqual([updateUser()]);
+        expect(dispatched).toEqual([duck.updateUser()]);
       });
 
       it('should call api and dispatch error action from response error', async () => {
@@ -140,10 +108,10 @@ describe('users duck', () => {
         axios.delete.mockRejectedValue(errorResponse(422, errors));
         await runSaga({
           dispatch: (action) => dispatched.push(action),
-        }, logoutSaga, logout(user));
+        }, duck.logoutSaga, duck.logout(user));
 
         expect(axios.delete).toHaveBeenCalledWith(`${API_BASE_URL}/logout`);
-        expect(dispatched).toEqual([setErrors(errors)]);
+        expect(dispatched).toEqual([duck.setErrors(errors)]);
       });
 
       it('should call api and dispatch error action from network error', async () => {
@@ -151,10 +119,10 @@ describe('users duck', () => {
         axios.delete.mockRejectedValue(new Error('Network error'));
         await runSaga({
           dispatch: (action) => dispatched.push(action),
-        }, logoutSaga, logout(user));
+        }, duck.logoutSaga, duck.logout(user));
 
         expect(axios.delete).toHaveBeenCalledWith(`${API_BASE_URL}/logout`);
-        expect(dispatched).toEqual([setErrors(['Network error'])]);
+        expect(dispatched).toEqual([duck.setErrors(['Network error'])]);
       });
     });
 
@@ -164,10 +132,10 @@ describe('users duck', () => {
         axios.get.mockResolvedValue(okResponse(user));
         await runSaga({
           dispatch: (action) => dispatched.push(action),
-        }, loadSaga, load());
+        }, duck.loadSaga, duck.load());
 
         expect(axios.get).toHaveBeenCalledWith(`${API_BASE_URL}/user`);
-        expect(dispatched).toEqual([initialized(user)]);
+        expect(dispatched).toEqual([duck.initialized(user)]);
       });
 
       it('should call api and dispatch error action from response error', async () => {
@@ -175,10 +143,10 @@ describe('users duck', () => {
         axios.get.mockRejectedValue(errorResponse(401, errors));
         await runSaga({
           dispatch: (action) => dispatched.push(action),
-        }, loadSaga, load());
+        }, duck.loadSaga, duck.load());
 
         expect(axios.get).toHaveBeenCalledWith(`${API_BASE_URL}/user`);
-        expect(dispatched).toEqual([initialized()]);
+        expect(dispatched).toEqual([duck.initialized()]);
       });
     });
   });

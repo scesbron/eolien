@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ApplicationController < ActionController::API
+  include Devise::Controllers::Helpers
+
   def render_resource(resource)
     if resource.respond_to?(:errors) && resource.errors.any?
       validation_error(resource)

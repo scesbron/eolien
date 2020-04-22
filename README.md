@@ -20,12 +20,8 @@ yarn add react-router-dom react-redux redux redux-saga axios
 
 ## TODO
 
-- configurer un mailer
-- ajouter une tâche dans capistrano pour builder le front
-- tester les envois de mail en local avec mailcatcher
-- déployer l'appli sur la prod hyrome
+- ajouter des tests pour l'api wind_farm (avec mock de l'api scada)
 - revoir le mailer pour enlever le logo de la jacterie et mettre le logo en configurable en fonction de la société (upload ?)
-- Comment gérer l'authentification par token en react (dans private route on regarde s'il y a l'attribut et on appelle le serveur ?)
 
 User.create(firstname: 'Sébastien', lastname: 'Cesbron', email:'seb@chezsoi.org', username: 'scesbron', password:'123456')
 

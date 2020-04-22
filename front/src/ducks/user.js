@@ -7,12 +7,12 @@ import { parseApiDate } from '../utils/date';
 
 // Constants
 
-export const LOAD = 'LOAD';
-export const LOGIN = 'LOGIN';
-export const LOGOUT = 'LOGOUT';
-export const SET_ERRORS = 'SET_ERRORS';
-export const UPDATE = 'UPDATE';
-export const INITIALIZED = 'INITIALIZED';
+export const LOAD = 'USER_LOAD';
+export const LOGIN = 'USER_LOGIN';
+export const LOGOUT = 'USER_LOGOUT';
+export const SET_ERRORS = 'USER_SET_ERRORS';
+export const UPDATE = 'USER_UPDATE';
+export const INITIALIZED = 'USER_INITIALIZED';
 
 // Actions
 
@@ -76,14 +76,14 @@ export const initialState = {
 const convert = (user) => (!user ? undefined : {
   ...user,
   birthDate: parseApiDate(user.birthDate),
-  loans: user.loans.map((loan) => ({
+  loans: user.loans ? user.loans.map((loan) => ({
     ...loan,
     date: parseApiDate(loan.date),
-  })),
-  shares: user.shares.map((share) => ({
+  })) : user.loans,
+  shares: user.shares ? user.shares.map((share) => ({
     ...share,
     date: parseApiDate(share.date),
-  })),
+  })) : user.shares,
 });
 
 export const reducer = (state = initialState, action) => {
@@ -97,7 +97,12 @@ export const reducer = (state = initialState, action) => {
     case LOGIN:
       return { ...state, loading: true };
     case UPDATE:
-      return { ...state, loading: false, current: convert(payload), errors: [] };
+      return {
+        ...state,
+        loading: false,
+        current: convert(payload),
+        errors: [],
+      };
     case INITIALIZED:
       return {
         ...state,
@@ -106,7 +111,12 @@ export const reducer = (state = initialState, action) => {
         current: convert(payload),
       };
     case SET_ERRORS:
-      return { ...state, loading: false, current: undefined, errors: payload };
+      return {
+        ...state,
+        loading: false,
+        current: undefined,
+        errors: payload,
+      };
     default:
       return state;
   }
