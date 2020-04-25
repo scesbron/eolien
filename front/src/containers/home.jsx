@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import { makeStyles } from '@material-ui/core/styles';
+import Chart from 'react-apexcharts';
 
 import { User, WindTurbineStatusType } from '../types';
 import * as duck from '../ducks/wind-farm';
@@ -17,6 +18,21 @@ const useStyles = makeStyles({
   title: {
     marginTop: '1rem',
     marginBottom: '1rem',
+  },
+  farm: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  turbine: {
+    width: '250px',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  chart: {
+    width: '250px',
+    height: '170px',
   },
 });
 
@@ -44,19 +60,54 @@ const Home = ({
         <Typography variant="h4" className={classes.title}>Erreur de connexion au parc</Typography>
       ) : !status ? (
         <Typography variant="h4" className={classes.title}>Chargement des données</Typography>
-      ) : status.map((turbine) => (
-        <>
-          <Typography variant="h4" className={classes.title}>{turbine.name}</Typography>
-          <Typography variant="h4" className={classes.title}>
-            Vitesse du vent :
-            {turbine.windSpeed}
-          </Typography>
-          <Typography variant="h4" className={classes.title}>
-            Puissance instantanée :
-            {turbine.instantPower}
-          </Typography>
-        </>
-      ))}
+      ) : (
+        <div className={classes.farm}>
+          {status.map((turbine) => (
+            <div key={turbine.name} className={classes.turbine}>
+              <div className={classes.chart}>
+                <Chart
+                  options={{
+                    plotOptions: {
+                      radialBar: {
+                        startAngle: -135,
+                        endAngle: 135,
+                        hollow: {
+                          margin: 0,
+                          size: '70%',
+                        },
+                        dataLabels: {
+                          name: {
+                            show: true,
+                            color: '#388e3c',
+                          },
+                          value: {
+                            show: true,
+                            color: '#81c784',
+                            formatter: (val) => `${parseInt(val * 24, 10)} kwh`,
+                          },
+                        },
+                      },
+                    },
+                    fill: {
+                      colors: ['#388e3c'],
+                    },
+                    stroke: {
+                      lineCap: 'round',
+                    },
+                    labels: [turbine.name],
+                  }}
+                  series={[turbine.instantPower / 24]}
+                  type="radialBar"
+                  width="250"
+                />
+              </div>
+              <Typography>
+                {`Vent : ${turbine.windSpeed.toFixed(2)} m/s`}
+              </Typography>
+            </div>
+          ))}
+        </div>
+      )}
     </Container>
   );
 };

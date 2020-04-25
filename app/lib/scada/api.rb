@@ -44,10 +44,10 @@ module Scada
       wind_farm.wind_turbines.map.with_index do |wind_turbine, index|
         WindTurbineStatus.new(
           wind_turbine.name,
-          to_d(values[1 + index * nb_values]),
-          to_d(values[0 + index * nb_values]),
-          to_d(values[3 + index * nb_values]),
-          to_d(values[2 + index * nb_values]),
+          to_f(values[1 + index * nb_values]),
+          to_f(values[0 + index * nb_values]),
+          to_f(values[3 + index * nb_values]),
+          to_f(values[2 + index * nb_values]),
         )
       end
     end
@@ -76,7 +76,7 @@ module Scada
                                timeout: 10
                               )
       str_value = Hash.from_xml(response.body)['Envelope']['Body']['get10minValuesRangeResponse']['OL']['LI']
-      str_value.split(',').map{ |value| value.to_d * 1000 }
+      str_value.split(',').map{ |value| value.to_f * 1000 }
     end
 
     def self.turbine_ten_minutes_values(session_id, name, start_date, end_date)
@@ -87,7 +87,7 @@ module Scada
                                timeout: 10
                               )
       Hash.from_xml(response.body)['Envelope']['Body']['get10minValuesRangeResponse']['OL']['LI'].map do |str_value|
-        str_value.split(',').map{ |value| value.to_d }
+        str_value.split(',').map{ |value| value.to_f }
       end
     end
 
@@ -100,8 +100,8 @@ module Scada
 
     private
 
-    def self.to_d(value)
-      value&.first&.scan(/\{(\d+\.?\d*),.*}/)&.last&.first&.to_d
+    def self.to_f(value)
+      value&.first&.scan(/\{(\d+\.?\d*),.*}/)&.last&.first&.to_f
     end
 
     def self.get_status_handle_body(session_id, fetch_interval, wind_farm)

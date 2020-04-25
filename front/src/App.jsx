@@ -33,6 +33,8 @@ const navigationRoutes = [
 const useStyles = makeStyles({
   container: {
     minHeight: '100%',
+    marginTop: '-16px',
+    paddingTop: '16px',
   },
   navigation: {
     position: 'fixed',
