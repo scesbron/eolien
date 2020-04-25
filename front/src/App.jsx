@@ -19,6 +19,9 @@ import Home from './containers/home';
 import Profile from './containers/profile';
 import * as userDuck from './ducks/user';
 import Investment from './containers/investment';
+import ForgottenPassword from './containers/forgotten-password';
+import { FORGOTTEN_PASSWORD, LOGIN, NEW_PASSWORD } from './constants/routes';
+import NewPassword from './containers/new-password';
 
 const navigationRoutes = [
   { path: '/', value: 'home' },
@@ -63,8 +66,14 @@ function App({ user, logout }) {
   return (
     <div className={classes.container}>
       <Switch>
-        <Route path="/login">
+        <Route path={LOGIN}>
           <Login />
+        </Route>
+        <Route path={FORGOTTEN_PASSWORD}>
+          <ForgottenPassword />
+        </Route>
+        <Route path={NEW_PASSWORD}>
+          <NewPassword />
         </Route>
         <PrivateRoute path="/profil">
           <Profile />

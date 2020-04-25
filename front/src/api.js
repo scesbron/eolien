@@ -13,6 +13,19 @@ export const session = {
   delete: () => axios.delete(`${API_BASE_URL}/logout`),
 };
 
+export const password = {
+  create: (username) => axios.post(`${API_BASE_URL}/password`, { user: { username } }),
+  update: (token, newPassword, passwordConfirmation) => (
+    axios.patch(`${API_BASE_URL}/password`, {
+      user: {
+        reset_password_token: token,
+        password: newPassword,
+        password_confirmation: passwordConfirmation,
+      },
+    })
+  ),
+};
+
 export const windFarm = {
   initialize: () => axios.get(`${API_BASE_URL}/wind_farm/init`),
   status: (sessionId, handle) => axios.get(`${API_BASE_URL}/wind_farm/status`, { params: { sessionId, handle } }),

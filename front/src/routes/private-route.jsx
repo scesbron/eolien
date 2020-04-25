@@ -3,6 +3,7 @@ import { Route, Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { User } from '../types';
+import { LOGIN } from '../constants/routes';
 
 const PrivateRoute = ({ children, path, user }) => (
   <Route
@@ -11,7 +12,7 @@ const PrivateRoute = ({ children, path, user }) => (
       user ? (
         children
       ) : (
-        <Redirect to={{ pathname: '/login', state: { from: location } }} />
+        <Redirect to={{ pathname: LOGIN, state: { from: location } }} />
       )
     )}
   />

@@ -4,17 +4,23 @@ import { makeStyles } from '@material-ui/core/styles';
 import { TextField } from 'mui-rff';
 import { Form } from 'react-final-form';
 import { Alert } from '@material-ui/lab';
+import Link from '@material-ui/core/Link';
 import { connect } from 'react-redux';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory, useLocation, Link as RouterLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import * as duck from '../ducks/user';
 import { User } from '../types';
+import logo from '../assets/images/hyrome.png';
+import { FORGOTTEN_PASSWORD } from '../constants/routes';
 
 const useStyles = makeStyles({
   container: {
     display: 'flex',
     justifyContent: 'center',
+  },
+  logo: {
+    width: '100%',
   },
   form: {
     maxWidth: '30rem',
@@ -26,14 +32,20 @@ const useStyles = makeStyles({
   button: {
     marginTop: '1rem',
   },
+  link: {
+    textAlign: 'center',
+    marginTop: '1rem',
+  },
 });
 
 const Login = ({
-  user, loading, errors, login,
+  user, loading, errors, login, setErrors,
 }) => {
   const classes = useStyles();
   const history = useHistory();
   const location = useLocation();
+
+  useEffect(() => { setErrors(); }, [setErrors]);
 
   useEffect(() => {
     if (user) {
@@ -48,23 +60,26 @@ const Login = ({
 
   return (
     <div className={classes.container}>
-      <Form
-        onSubmit={onSubmit}
-        render={({ handleSubmit }) => (
+      <Form onSubmit={onSubmit}>
+        {({ handleSubmit }) => (
           <form onSubmit={handleSubmit} className={classes.form}>
+            <img src={logo} alt="Logo" className={classes.logo} />
             {errors.length > 0 && (
               <Alert variant="filled" severity="error">
                 {errors.join('\n')}
               </Alert>
             )}
-            <TextField label="Username" name="username" required />
+            <TextField label="Nom d'utilisateur" name="username" required />
             <TextField label="Mot de passe" type="password" name="password" required />
             <Button type="submit" variant="contained" color="primary" className={classes.button} disabled={loading}>
               Connexion
             </Button>
+            <Link component={RouterLink} to={FORGOTTEN_PASSWORD} className={classes.link}>
+              Mot de passe oublié ?
+            </Link>
           </form>
         )}
-      />
+      </Form>
     </div>
   );
 };
@@ -74,6 +89,7 @@ Login.propTypes = {
   loading: PropTypes.bool.isRequired,
   errors: PropTypes.arrayOf(PropTypes.string).isRequired,
   login: PropTypes.func.isRequired,
+  setErrors: PropTypes.func.isRequired,
 };
 
 Login.defaultProps = {
@@ -88,6 +104,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   login: duck.login,
+  setErrors: duck.setErrors,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
