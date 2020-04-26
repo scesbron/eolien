@@ -9,6 +9,7 @@ import Chart from 'react-apexcharts';
 
 import { User, WindTurbineStatusType } from '../types';
 import * as duck from '../ducks/wind-farm';
+import Loader from '../components/loader';
 
 const useStyles = makeStyles({
   container: {
@@ -102,12 +103,14 @@ const Home = ({
                 />
               </div>
               <Typography>
-                {`Vent : ${turbine.windSpeed.toFixed(2)} m/s`}
+                {`Vent : ${turbine.windSpeed ? turbine.windSpeed.toFixed(2) : '?'} m/s`}
               </Typography>
+
             </div>
           ))}
         </div>
       )}
+      {(initializing || (!status && errors.length === 0)) && (<Loader />)}
     </Container>
   );
 };
