@@ -16,8 +16,4 @@ class ApplicationController < ActionController::API
       errors: resource.errors.to_a
     }, status: :bad_request
   end
-
-  def frontend_index_html
-    render file: 'public/index.html'
-  end
 end

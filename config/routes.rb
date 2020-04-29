@@ -16,8 +16,4 @@ Rails.application.routes.draw do
       get :status, on: :collection
     end
   end
-
-  get '*path', to: 'application#frontend_index_html', constraints: lambda { |request|
-    !request.xhr? && request.format.html?
-  }
 end
