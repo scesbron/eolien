@@ -14,6 +14,7 @@ import { green } from '@material-ui/core/colors';
 import * as duck from '../ducks/user';
 import logo from '../assets/images/hyrome.png';
 import { LOGIN } from '../constants/routes';
+import { useQuery } from '../routes/utils';
 
 const useStyles = makeStyles({
   container: {
@@ -55,6 +56,7 @@ const ForgottenPassword = ({
 }) => {
   const classes = useStyles();
   const history = useHistory();
+  const query = useQuery();
   const [success, setSuccess] = useState(false);
   const buttonClass = success ? classes.buttonSuccess : classes.button;
 
@@ -72,7 +74,7 @@ const ForgottenPassword = ({
 
   return (
     <div className={classes.container}>
-      <Form onSubmit={onSubmit}>
+      <Form onSubmit={onSubmit} initialValues={{ username: query.get('username') }}>
         {({ handleSubmit }) => (
           <form onSubmit={handleSubmit} className={classes.form}>
             <img src={logo} alt="Logo" className={classes.logo} />
