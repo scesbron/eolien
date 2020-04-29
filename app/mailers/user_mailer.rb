@@ -2,6 +2,8 @@ class UserMailer < ApplicationMailer
 
   def explain(user)
     @user = user
+    @password = password = Devise.friendly_token.first(8)
+    @user.update!(password: @password)
     mail(to: @user.email, subject: "Connexion à l'application de suivi du parc")
   end
 

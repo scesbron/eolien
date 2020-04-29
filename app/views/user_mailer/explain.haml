@@ -10,12 +10,13 @@
 %p
   Pour accéder à cette application vous avez un nom d'utilisateur : <strong>#{@user.username}</strong>
 %p
-  Avec ce nom d'utilisateur et votre mot de passe vous pouvez vous connecter à l'application en allant sur le site
+  Nous vous avons également généré le mot de passe suivant: <strong>#{@password}</strong>
+%p
+  Avec ce nom d'utilisateur et ce mot de passe vous pouvez vous connecter à l'application en allant sur le site
   = link_to APP_URL, APP_URL
 %p
-  Si vous ne vous êtes jamais connecté à l'application ou si vous avez oublié votre mot de passe vous pouvez demander à le
-  réinitialiser en
-  = link_to 'cliquant ici', "#{APP_URL}/mot-de-passe-oublié"
+  Si vous souhaitez modifier votre mot de passe vous pouvez demander à le réinitialiser en
+  = link_to 'cliquant ici', "#{APP_URL}/mot-de-passe/oublié?username=#{@user.username}"
   et en indiquant votre nom d'utilisateur puis en cliquant sur le bouton "Envoyez-moi les instructions de réinitialisation".
 %p
   Si vous avez des difficultés à vous connecter à l'application vous pouvez nous contacter en nous envoyant un mail à l'adresse
