@@ -52,13 +52,15 @@ module Scada
       end
     end
 
-    def self.daily_production(session_id, date)
+    def self.daily_production(session_id, wind_farm, date)
       response = Typhoeus.post("#{URL}/nc2/services/MessageService",
-        body: daily_production_request(session_id, date),
+        body: daily_production_request(session_id, wind_farm, date),
         headers: headers(session_id),
-        timeout: 2
+        timeout: 2,
+        ssl_verifypeer: false,
+        ssl_verifyhost: 0
       )
-      Hash.from_xml(response.body)['Envelope']['Body']['getDailyReportResponse']['OL']['LI'].map do |str_value|
+      [Hash.from_xml(response.body)['Envelope']['Body']['getDailyReportResponse']['OL']['LI']].flatten.map do |str_value|
         values = str_value.split(',')
         Scada::DailyProduction.new(
           values[0].to_i, values[1].to_i, values[2].to_i, values[3].to_i, values[4].to_i,
@@ -154,7 +156,7 @@ module Scada
 </SOAP-ENV:Envelope>)
     end
 
-    def self.daily_production_request(session_id, date)
+    def self.daily_production_request(session_id, wind_farm, date)
       %(<?xml version='1.0' encoding='utf-8'?>
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
   <SOAP-ENV:Header>
@@ -165,11 +167,7 @@ module Scada
   <SOAP-ENV:Body>
     <getDailyReport>
       <weanameList>
-        <weaname>01WEA84778</weaname>
-        <weaname>02WEA84779</weaname>
-        <weaname>03WEA84780</weaname>
-        <weaname>04WEA84781</weaname>
-        <weaname>05WEA84782</weaname>
+#{wind_farm.wind_turbines.flat_map { |turbine| "        <weaname>#{turbine.wea_name}</weaname>" }.first}
       </weanameList>
       <kksList>
         <kks>TIMER01.daily</kks>
