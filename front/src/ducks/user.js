@@ -21,8 +21,8 @@ export const INITIALIZED = 'USER_INITIALIZED';
 // Actions
 
 export const logout = () => ({ type: LOGOUT });
-export const login = (username, password) => (
-  { type: LOGIN, payload: { username, password } }
+export const login = (username, password, rememberMe) => (
+  { type: LOGIN, payload: { username, password, rememberMe } }
 );
 export const forgottenPassword = (username) => (
   { type: FORGOTTEN_PASSWORD, payload: { username } }
@@ -49,10 +49,10 @@ export function* logoutSaga() {
   }
 }
 
-export function* loginSaga({ payload: { username, password } }) {
+export function* loginSaga({ payload: { username, password, rememberMe } }) {
   try {
     const response = yield call(api.session.create, username, password);
-    setAuthorization(response.headers.authorization);
+    setAuthorization(response.headers.authorization, rememberMe);
     yield put(updateUser(response.data));
   } catch (error) {
     yield put(setErrors(getErrors(error)));

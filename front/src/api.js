@@ -2,7 +2,7 @@ import axios from 'axios';
 
 import { API_BASE_URL } from './config';
 
-const AUTH_KEY = 'Authorization';
+const AUTH_KEY = 'EOLIEN-TOKEN';
 
 export const user = {
   get: () => axios.get(`${API_BASE_URL}/user`),
@@ -31,11 +31,15 @@ export const windFarm = {
   status: (sessionId, handle) => axios.get(`${API_BASE_URL}/wind_farm/status`, { params: { sessionId, handle } }),
 };
 
-export const setAuthorization = (authorization) => {
-  sessionStorage.setItem(AUTH_KEY, authorization);
+export const setAuthorization = (authorization, rememberMe) => {
   axios.defaults.headers.common.Authorization = authorization;
+  if (authorization) {
+    const storage = rememberMe ? localStorage : sessionStorage;
+    storage.setItem(AUTH_KEY, authorization);
+  }
 };
 
 export const initAuthorization = () => {
-  axios.defaults.headers.common.Authorization = sessionStorage.getItem(AUTH_KEY);
+  axios.defaults.headers.common.Authorization = localStorage.getItem(AUTH_KEY)
+    || sessionStorage.getItem(AUTH_KEY);
 };

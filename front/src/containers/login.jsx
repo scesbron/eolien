@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
 import { Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { TextField } from 'mui-rff';
+import { Checkboxes, TextField } from 'mui-rff';
 import { Form } from 'react-final-form';
 import { Alert } from '@material-ui/lab';
 import Link from '@material-ui/core/Link';
@@ -55,7 +55,7 @@ const Login = ({
   }, [user, history, location]);
 
   const onSubmit = useCallback((values) => {
-    login(values.username, values.password);
+    login(values.username, values.password, values.rememberMe);
   }, [login]);
 
   return (
@@ -71,6 +71,7 @@ const Login = ({
             )}
             <TextField label="Nom d'utilisateur" name="username" required />
             <TextField label="Mot de passe" type="password" name="password" required />
+            <Checkboxes name="rememberMe" color="primary" data={[{ label: 'Se rappeler de moi', value: true }]} />
             <Button type="submit" variant="contained" color="primary" className={classes.button} disabled={loading}>
               Connexion
             </Button>
