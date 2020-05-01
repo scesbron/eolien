@@ -1,6 +1,7 @@
 import { createStore, applyMiddleware, combineReducers } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import { fork } from 'redux-saga/effects';
+import logger from 'redux-logger';
 
 import * as user from './ducks/user';
 import * as windFarm from './ducks/wind-farm';
@@ -17,7 +18,11 @@ function* rootSaga() {
 
 const configureStore = () => {
   const sagaMiddleware = createSagaMiddleware();
-  const store = createStore(rootReducer, applyMiddleware(sagaMiddleware));
+  const middlewares = [sagaMiddleware];
+  if (process.env.NODE_ENV === 'development' && process.env.REACT_APP_ENABLE_REDUX_LOGGER) {
+    middlewares.push(logger);
+  }
+  const store = createStore(rootReducer, applyMiddleware(...middlewares));
   sagaMiddleware.run(rootSaga);
   return store;
 };

@@ -14,7 +14,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import PrivateRoute from './routes/private-route';
 import Login from './containers/login';
-import { User } from './types';
+import { userType } from './types';
 import Home from './containers/home';
 import Profile from './containers/profile';
 import * as userDuck from './ducks/user';
@@ -125,7 +125,7 @@ function App({ user, logout }) {
 }
 
 App.propTypes = {
-  user: User,
+  user: userType,
   logout: PropTypes.func.isRequired,
 };
 

@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
@@ -7,7 +7,9 @@ import Container from '@material-ui/core/Container';
 import { makeStyles } from '@material-ui/core/styles';
 import Chart from 'react-apexcharts';
 
-import { User, WindTurbineStatusType } from '../types';
+import {
+  initType, requestType, userType, windTurbineStatusType,
+} from '../types';
 import * as duck from '../ducks/wind-farm';
 import Loader from '../components/loader';
 
@@ -38,32 +40,47 @@ const useStyles = makeStyles({
 });
 
 const Home = ({
-  user, initializing, initialized, errors, status, initialize, getStatus,
+  user, init, status, initialize, getStatus,
 }) => {
   const classes = useStyles();
-  useEffect(() => { initialize(); }, [initialize]);
+
+  const update = useCallback(() => {
+    if (!init.onGoing && !init.errors.length && (!init.success || status.errors.length)) {
+      initialize();
+    } else if (init.success && !status.onGoing && !status.errors.length) {
+      getStatus();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    init.onGoing, init.errors.length, init.success, status.errors.length, initialize, getStatus,
+  ]);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { update(); }, []);
+
   useEffect(() => {
     let interval;
-    if (initialized) {
-      interval = setInterval(getStatus, 2000);
-      getStatus();
+    if (init.success) {
+      interval = setInterval(update, 2000);
+      update();
     }
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [initialized, getStatus]);
+  }, [init.success, update]);
+
   return (
     <Container className={classes.container}>
       <Typography variant="h4" className={classes.title}>{`Bonjour ${user.firstname}`}</Typography>
-      { initializing ? (
+      { init.onGoing ? (
         <Typography variant="h4" className={classes.title}>Connexion au parc</Typography>
-      ) : errors.length > 0 ? (
+      ) : (init.errors.length || status.errors.length) ? (
         <Typography variant="h4" className={classes.title}>Erreur de connexion au parc</Typography>
-      ) : !status ? (
+      ) : (status.onGoing && !status.value) ? (
         <Typography variant="h4" className={classes.title}>Chargement des données</Typography>
       ) : (
         <div className={classes.farm}>
-          {status.map((turbine) => (
+          {(status.value || []).map((turbine) => (
             <div key={turbine.name} className={classes.turbine}>
               <div className={classes.chart}>
                 <Chart
@@ -110,31 +127,23 @@ const Home = ({
           ))}
         </div>
       )}
-      {(initializing || (!status && errors.length === 0)) && (<Loader />)}
+      {(init.onGoing || (status.onGoing && !status.value)) && (<Loader />)}
     </Container>
   );
 };
 
 Home.propTypes = {
-  user: User.isRequired,
-  initializing: PropTypes.bool.isRequired,
-  initialized: PropTypes.bool.isRequired,
-  errors: PropTypes.arrayOf(PropTypes.string).isRequired,
-  status: PropTypes.arrayOf(WindTurbineStatusType),
+  user: userType.isRequired,
+  init: requestType(initType).isRequired,
+  status: requestType(PropTypes.arrayOf(windTurbineStatusType)).isRequired,
   initialize: PropTypes.func.isRequired,
   getStatus: PropTypes.func.isRequired,
 };
 
-Home.defaultProps = {
-  status: undefined,
-};
-
 const mapStateToProps = (state) => ({
   user: state.user.current,
-  initializing: state.windFarm.initializing,
-  initialized: state.windFarm.initialized,
+  init: state.windFarm.init,
   status: state.windFarm.status,
-  errors: state.windFarm.errors,
 });
 
 const mapDispatchToProps = {

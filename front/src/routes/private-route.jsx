@@ -2,7 +2,7 @@ import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { User } from '../types';
+import { userType } from '../types';
 import { LOGIN } from '../constants/routes';
 
 const PrivateRoute = ({ children, path, user }) => (
@@ -21,7 +21,7 @@ const PrivateRoute = ({ children, path, user }) => (
 PrivateRoute.propTypes = {
   children: PropTypes.node.isRequired,
   path: PropTypes.string.isRequired,
-  user: User,
+  user: userType,
 };
 
 PrivateRoute.defaultProps = {

@@ -10,7 +10,7 @@ import { useHistory, useLocation, Link as RouterLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import * as duck from '../ducks/user';
-import { User } from '../types';
+import { userType } from '../types';
 import logo from '../assets/images/hyrome.png';
 import { FORGOTTEN_PASSWORD } from '../constants/routes';
 
@@ -86,7 +86,7 @@ const Login = ({
 };
 
 Login.propTypes = {
-  user: User,
+  user: userType,
   loading: PropTypes.bool.isRequired,
   errors: PropTypes.arrayOf(PropTypes.string).isRequired,
   login: PropTypes.func.isRequired,

@@ -4,7 +4,7 @@ import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import { makeStyles } from '@material-ui/core/styles';
 
-import { User } from '../types';
+import { userType } from '../types';
 
 const useStyles = makeStyles({
   container: {
@@ -28,7 +28,7 @@ const Profile = ({ user }) => {
 };
 
 Profile.propTypes = {
-  user: User.isRequired,
+  user: userType.isRequired,
 };
 
 const mapStateToProps = (state) => ({

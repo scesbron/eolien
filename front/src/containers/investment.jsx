@@ -11,7 +11,7 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 
-import { User } from '../types';
+import { userType } from '../types';
 import { formatCurrency } from '../utils/currency';
 import { formatDate } from '../utils/date';
 import { sum } from '../utils/math';
@@ -78,7 +78,7 @@ const Investment = ({ user }) => {
 };
 
 Investment.propTypes = {
-  user: User.isRequired,
+  user: userType.isRequired,
 };
 
 const mapStateToProps = (state) => ({
