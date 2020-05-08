@@ -189,7 +189,7 @@ module Scada
 </SOAP-ENV:Envelope>)
     end
 
-    def self.parc_ten_minutes_values_request(session_id, start_date, end_date)
+    def self.parc_ten_minutes_values_request(session_id, wind_farm, start_date, end_date)
       %(<?xml version='1.0' encoding='utf-8'?>
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
   <SOAP-ENV:Header>
@@ -197,9 +197,11 @@ module Scada
   </SOAP-ENV:Header>
   <SOAP-ENV:Body>
     <get10minValuesRange>
-      <RFCName>01CWE5626</RFCName>
+      <RFCName>#{wind_farm.cwe_name}</RFCName>
       <kksList>
+        <kks>ANA13.10mav</kks>
         <kks>ANA17.10mav</kks>
+        <kks>ANA80.10mav</kks>
       </kksList>
       <fromDateTime>#{start_date.strftime('%Y-%m-%d-%H:%M')}</fromDateTime>
       <toDateTime>#{end_date.strftime('%Y-%m-%d-%H:%M')}</toDateTime>
@@ -209,7 +211,7 @@ module Scada
     end
 
 
-    def self.turbine_ten_minutes_values_request(session_id, name, start_date, end_date)
+    def self.turbine_ten_minutes_values_request(session_id, wind_turbine, start_date, end_date)
       %(<?xml version='1.0' encoding='utf-8'?>
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
   <SOAP-ENV:Header>
@@ -217,7 +219,7 @@ module Scada
   </SOAP-ENV:Header>
   <SOAP-ENV:Body>
     <get10minValuesRange>
-      <RFCName>#{name}</RFCName>
+      <RFCName>#{wind_turbine.wea_name}</RFCName>
       <kksList>
         <kks>ANA097.10mav</kks>
         <kks>MDL10FS001.10mav</kks>

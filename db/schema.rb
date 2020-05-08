@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_08_154003) do
+ActiveRecord::Schema.define(version: 2020_05_08_162334) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -162,6 +162,9 @@ ActiveRecord::Schema.define(version: 2020_05_08_154003) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "reference"
+    t.string "trader_email"
+    t.string "trader_mail_subject"
+    t.string "cwe_name"
     t.index ["name"], name: "index_wind_farms_on_name", unique: true
     t.index ["slug"], name: "index_wind_farms_on_slug", unique: true
   end
@@ -174,6 +177,7 @@ ActiveRecord::Schema.define(version: 2020_05_08_154003) do
     t.bigint "wind_farm_id"
     t.string "wea_name"
     t.boolean "enabled", default: true, null: false
+    t.integer "number"
     t.index ["wind_farm_id"], name: "index_wind_turbines_on_wind_farm_id"
   end
 

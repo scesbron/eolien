@@ -6,3 +6,11 @@ task update_daily_data: :environment do
   end
   puts 'done.'
 end
+
+task send_real_time_data_to_trader: :environment do
+  puts 'Sending real time data to trader ...'
+  WindFarm.all.map do |wind_farm|
+    SendRealTimeDataToTraderJob.perform_now(wind_farm)
+  end
+  puts 'done.'
+end
