@@ -2,6 +2,7 @@
 import React, { useCallback, useEffect } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { Button } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import Chart from 'react-apexcharts';
@@ -33,11 +34,12 @@ const ChartContainer = styled.div`
 `;
 
 const StyledContainer = styled(Container)`
+  margin-top: 1rem;
   text-align: center;
 `;
 
 const Title = styled(Typography)`
-  margin: 1rem 0;
+  padding: 1rem 0;
 `;
 
 const RealTimeData = ({
@@ -76,6 +78,9 @@ const RealTimeData = ({
     return (
       <StyledContainer>
         <Title variant="h4">Erreur de connexion au parc</Title>
+        <Button onClick={update} variant="outlined">
+          Rafraîchir
+        </Button>
       </StyledContainer>
     );
   }

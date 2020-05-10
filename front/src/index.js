@@ -7,7 +7,7 @@ import configureStore from './store';
 import './index.css';
 import App from './App';
 import { initAuthorization } from './api';
-import Loader from './containers/loader';
+import AppLoader from './containers/app-loader';
 
 const store = configureStore();
 
@@ -17,9 +17,9 @@ ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
       <Router>
-        <Loader>
+        <AppLoader>
           <App />
-        </Loader>
+        </AppLoader>
       </Router>
     </Provider>
   </React.StrictMode>,

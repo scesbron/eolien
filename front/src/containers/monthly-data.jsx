@@ -18,6 +18,7 @@ import * as duck from '../ducks/wind-farm';
 import Loader from '../components/loader';
 
 const StyledContainer = styled(Container)`
+  margin-top: 1rem;
   text-align: center;
 `;
 

@@ -1,10 +1,19 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import styled from 'styled-components';
 
 import * as userDuck from '../ducks/user';
+import Loader from '../components/loader';
 
-const Loader = ({
+const Container = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+`;
+
+const AppLoader = ({
   children, initializing, initialized, load,
 }) => {
   useEffect(() => {
@@ -12,13 +21,15 @@ const Loader = ({
   }, [initialized, initializing, load]);
 
   return (initializing || !initialized) ? (
-    <div>Loading...</div>
+    <Container>
+      <Loader />
+    </Container>
   ) : (
     children
   );
 };
 
-Loader.propTypes = {
+AppLoader.propTypes = {
   children: PropTypes.node.isRequired,
   initializing: PropTypes.bool.isRequired,
   initialized: PropTypes.bool.isRequired,
@@ -34,4 +45,4 @@ const mapDispatchToProps = {
   load: userDuck.load,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Loader);
+export default connect(mapStateToProps, mapDispatchToProps)(AppLoader);
