@@ -81,7 +81,7 @@ const RealTimeData = ({
   }
 
   return (
-    <StyledContainer>
+    <StyledContainer disableGutters>
       <Farm>
         {(status.value || []).map((turbine) => (
           <Turbine key={turbine.name}>

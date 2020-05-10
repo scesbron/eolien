@@ -63,7 +63,7 @@ const Home = ({ init, initialize }) => {
   }
 
   return (
-    <StyledContainer>
+    <StyledContainer disableGutters>
       <StyledBar position="static" color="transparent">
         <Tabs
           indicatorColor="primary"

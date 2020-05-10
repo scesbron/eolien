@@ -10,6 +10,7 @@ import Container from '@material-ui/core/Container';
 import {
   addMonths, subMonths, isSameMonth,
 } from 'date-fns';
+import Chart from 'react-apexcharts';
 
 import { format } from '../utils/date';
 import { initType, requestType, monthlyDataType } from '../types';
@@ -47,7 +48,7 @@ const MonthlyData = ({ init, monthlyData, getMonthlyData }) => {
   const firstMonth = isSameMonth(month, init.value.minDate);
 
   return (
-    <StyledContainer>
+    <StyledContainer disableGutters>
       <Header>
         <IconButton onClick={onPrevious} disabled={firstMonth}><ArrowBackIosIcon /></IconButton>
         <Typography variant="h4">{format(month, 'MMMM')}</Typography>
@@ -59,9 +60,29 @@ const MonthlyData = ({ init, monthlyData, getMonthlyData }) => {
       )}
       {monthlyData.success && (
         <>
-          <div>Productible : {monthlyData.value.productibles.join(', ')}</div>
-          <div>Labels : {monthlyData.value.labels.join(', ')}</div>
-          <div>Values : {monthlyData.value.values.join(', ')}</div>
+          <Chart
+            options={{
+              plotOptions: {
+                bar: {
+                  horizontal: false,
+                },
+              },
+              dataLabels: {
+                enabled: false,
+              },
+              xaxis: {
+                categories: monthlyData.value.labels,
+              },
+              yaxis: {
+                max: init.value.turbinePower * init.value.turbineCount * 24,
+              },
+            }}
+            series={[{
+              name: 'Production',
+              data: monthlyData.value.values,
+            }]}
+            type="bar"
+          />
         </>
       )}
     </StyledContainer>

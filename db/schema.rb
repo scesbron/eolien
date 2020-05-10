@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_08_162334) do
+ActiveRecord::Schema.define(version: 2020_05_10_161733) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -165,6 +165,7 @@ ActiveRecord::Schema.define(version: 2020_05_08_162334) do
     t.string "trader_email"
     t.string "trader_mail_subject"
     t.string "cwe_name"
+    t.integer "turbine_power"
     t.index ["name"], name: "index_wind_farms_on_name", unique: true
     t.index ["slug"], name: "index_wind_farms_on_slug", unique: true
   end

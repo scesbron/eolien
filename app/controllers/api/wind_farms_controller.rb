@@ -14,6 +14,8 @@ module Api
         handle: handle,
         minDate: min_date,
         maxDate: max_date,
+        turbinePower: wind_farm.turbine_power,
+        turbineCount: wind_farm.wind_turbines.enabled.count
       }
     end
 
