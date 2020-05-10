@@ -9,36 +9,28 @@ module Scada
     CLIENT_VERSION = ENV['SCADA_CLIENT_VERSION']
 
     def self.login
-      response = Typhoeus.post(
+      response = post(
         "#{URL}/nc2/services/login",
-        body: { connection: 'secure', userName: USERNAME, pw: PASSWORD, client: 'nc2' },
-        timeout: 5,
-        ssl_verifypeer: false,
-        ssl_verifyhost: 0
+        { connection: 'secure', userName: USERNAME, pw: PASSWORD, client: 'nc2' },
       )
       response.headers['Set-Cookie']&.scan(/NC2SESSIONID=([a-zA-Z0-9]*);/)&.last&.first
     end
 
     def self.get_status_handle(session_id, wind_farm, fetch_interval = 10000)
-      response = Typhoeus.post(
+      response = post_with_session_id(
+        session_id,
         "#{URL}/nc2/services/MessageService",
-        body: get_status_handle_body(session_id, fetch_interval, wind_farm),
-        headers: headers(session_id),
-        ssl_verifypeer: false,
-        ssl_verifyhost: 0
+        get_status_handle_body(session_id, fetch_interval, wind_farm)
       )
       Hash.from_xml(response.body)['Envelope']['Body']['subscribeRealTimeValuesResponse']['handle']
     end
 
     def self.status(session_id, handle, wind_farm)
       nb_values = values().size
-      response = Typhoeus.post(
+      response = post_with_session_id(
+        session_id,
         "#{URL}/nc2/services/MessageService",
-        body: status_request(session_id, handle),
-        headers: headers(session_id),
-        timeout: 2,
-        ssl_verifypeer: false,
-        ssl_verifyhost: 0
+        status_request(session_id, handle),
       )
       values = Hash.from_xml(response.body)['Envelope']['Body']['getRealTimeValuesByHandleResponse']['kksArray'].scan(/(\{.*?\})?,?/)
       wind_farm.wind_turbines.enabled.map.with_index do |wind_turbine, index|
@@ -53,12 +45,10 @@ module Scada
     end
 
     def self.daily_production(session_id, wind_farm, date)
-      response = Typhoeus.post("#{URL}/nc2/services/MessageService",
-        body: daily_production_request(session_id, wind_farm, date),
-        headers: headers(session_id),
-        timeout: 2,
-        ssl_verifypeer: false,
-        ssl_verifyhost: 0
+      response = post_with_session_id(
+        session_id,
+        "#{URL}/nc2/services/MessageService",
+        daily_production_request(session_id, wind_farm, date),
       )
       [Hash.from_xml(response.body)['Envelope']['Body']['getDailyReportResponse']['OL']['LI']].flatten.map do |str_value|
         values = str_value.split(',')
@@ -70,28 +60,45 @@ module Scada
       end
     end
 
-    def self.parc_ten_minutes_values(session_id, start_date, end_date)
-      request = parc_ten_minutes_values_request(session_id, start_date, end_date)
-      response = Typhoeus.post("#{URL}/nc2/services/MessageService",
-                               body: request,
-                               headers: headers(session_id),
-                               timeout: 10
-                              )
-      str_value = Hash.from_xml(response.body)['Envelope']['Body']['get10minValuesRangeResponse']['OL']['LI']
-      str_value.split(',').map{ |value| value.to_f * 1000 }
-    end
-
-    def self.turbine_ten_minutes_values(session_id, name, start_date, end_date)
-      request = turbine_ten_minutes_values_request(session_id, name, start_date, end_date)
-      response = Typhoeus.post("#{URL}/nc2/services/MessageService",
-                               body: request,
-                               headers: headers(session_id),
-                               timeout: 10
-                              )
-      Hash.from_xml(response.body)['Envelope']['Body']['get10minValuesRangeResponse']['OL']['LI'].map do |str_value|
-        str_value.split(',').map{ |value| value.to_f }
+    def self.parc_ten_minutes_values(session_id, wind_farm, start_time, end_time)
+      response = post_with_session_id(
+        session_id,
+        "#{URL}/nc2/services/MessageService",
+        parc_ten_minutes_values_request(session_id, wind_farm, start_time, end_time),
+      )
+      data = Hash.from_xml(response.body)['Envelope']['Body']['get10minValuesRangeResponse']['OL']['LI'].map do |str_value|
+        str_value.split(',', -1)
+      end
+      data.first.each_with_index.map do |_, index|
+        Scada::ParcTenMinutesValues.new(
+          start_time + (10 * index).minutes,
+          data[0][index]
+        )
       end
     end
+
+    def self.turbine_ten_minutes_values(session_id, wind_turbine, start_time, end_time)
+      result = []
+      response = post_with_session_id(
+        session_id,
+        "#{URL}/nc2/services/MessageService",
+        turbine_ten_minutes_values_request(session_id, wind_turbine, start_time, end_time)
+      )
+      data = Hash.from_xml(response.body)['Envelope']['Body']['get10minValuesRangeResponse']['OL']['LI'].map do |str_value|
+        str_value.split(',', -1)
+      end
+      data.first.each_with_index.map do |_, index|
+        Scada::TurbineTenMinutesValues.new(
+          start_time + (10 * index).minutes,
+          data[0][index],
+          data[1][index],
+          data[2][index],
+          data[3][index]
+        )
+      end
+    end
+
+    private
 
     def self.headers(session_id)
       {
@@ -100,7 +107,28 @@ module Scada
       }
     end
 
-    private
+    def self.post(url, body, timeout: 5)
+      Typhoeus.post(
+        url,
+        body: body,
+        timeout: timeout,
+        connecttimeout: timeout,
+        ssl_verifypeer: false,
+        ssl_verifyhost: 0
+      )
+    end
+
+    def self.post_with_session_id(session_id, url, body, timeout: 5)
+      Typhoeus.post(
+        url,
+        body: body,
+        timeout: timeout,
+        headers: headers(session_id),
+        connecttimeout: timeout,
+        ssl_verifypeer: false,
+        ssl_verifyhost: 0
+      )
+    end
 
     def self.to_f(value)
       value&.first&.scan(/\{(\d+\.?\d*),.*}/)&.last&.first&.to_f
@@ -189,7 +217,7 @@ module Scada
 </SOAP-ENV:Envelope>)
     end
 
-    def self.parc_ten_minutes_values_request(session_id, wind_farm, start_date, end_date)
+    def self.parc_ten_minutes_values_request(session_id, wind_farm, start_time, end_time)
       %(<?xml version='1.0' encoding='utf-8'?>
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
   <SOAP-ENV:Header>
@@ -203,15 +231,15 @@ module Scada
         <kks>ANA17.10mav</kks>
         <kks>ANA80.10mav</kks>
       </kksList>
-      <fromDateTime>#{start_date.strftime('%Y-%m-%d-%H:%M')}</fromDateTime>
-      <toDateTime>#{end_date.strftime('%Y-%m-%d-%H:%M')}</toDateTime>
+      <fromDateTime>#{start_time.strftime('%Y-%m-%d-%H:%M')}</fromDateTime>
+      <toDateTime>#{end_time.strftime('%Y-%m-%d-%H:%M')}</toDateTime>
     </get10minValuesRange>
   </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>)
     end
 
 
-    def self.turbine_ten_minutes_values_request(session_id, wind_turbine, start_date, end_date)
+    def self.turbine_ten_minutes_values_request(session_id, wind_turbine, start_time, end_time)
       %(<?xml version='1.0' encoding='utf-8'?>
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
   <SOAP-ENV:Header>
@@ -221,13 +249,13 @@ module Scada
     <get10minValuesRange>
       <RFCName>#{wind_turbine.wea_name}</RFCName>
       <kksList>
-        <kks>ANA097.10mav</kks>
+        <kks>BHA10FE012.10mav</kks>
+        <kks>ANA085.10mav</kks>
         <kks>MDL10FS001.10mav</kks>
         <kks>MDL10FG001.10mav</kks>
-        <kks>ANA085.10mav</kks>
       </kksList>
-      <fromDateTime>#{start_date.strftime('%Y-%m-%d-%H:%M')}</fromDateTime>
-      <toDateTime>#{end_date.strftime('%Y-%m-%d-%H:%M')}</toDateTime>
+      <fromDateTime>#{start_time.strftime('%Y-%m-%d-%H:%M')}</fromDateTime>
+      <toDateTime>#{end_time.strftime('%Y-%m-%d-%H:%M')}</toDateTime>
     </get10minValuesRange>
   </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>)
