@@ -42,8 +42,7 @@ fr:
       default: "%d/%m/%Y"
       short: "%e %b"
       long: "%e %B %Y"
-      zoho: "%m/%d/%Y"
-      push_notif: "%a %-d %b"
+      day: "%d"
     month_names:
     -
     - janvier

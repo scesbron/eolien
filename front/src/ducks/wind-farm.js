@@ -3,20 +3,31 @@ import {
 } from 'redux-saga/effects';
 import * as api from '../api';
 import { getErrors } from './utils';
+import { parseApiDate } from '../utils/date';
 
 export const INIT_START = 'WIND_FARM_INIT_START';
 export const INIT_SUCCESS = 'WIND_FARM_INIT_SUCCESS';
 export const INIT_ERROR = 'WIND_FARM_INIT_ERROR';
+
 export const GET_STATUS_START = 'WIND_FARM_GET_STATUS_START';
 export const GET_STATUS_SUCCESS = 'WIND_FARM_GET_STATUS_SUCCESS';
 export const GET_STATUS_ERROR = 'WIND_FARM_GET_STATUS_ERROR';
 
+export const MONTHLY_DATA_START = 'WIND_FARM_MONTHLY_DATA_START';
+export const MONTHLY_DATA_SUCCESS = 'WIND_FARM_MONTHLY_DATA_SUCCESS';
+export const MONTHLY_DATA_ERROR = 'WIND_FARM_MONTHLY_DATA_ERROR';
+
 export const initialize = () => ({ type: INIT_START });
 export const initialized = (data) => ({ type: INIT_SUCCESS, payload: data });
+export const setInitErrors = (errors) => ({ type: INIT_ERROR, payload: errors });
+
 export const getStatus = () => ({ type: GET_STATUS_START });
 export const updateStatus = (data) => ({ type: GET_STATUS_SUCCESS, payload: data });
-export const setInitErrors = (errors) => ({ type: INIT_ERROR, payload: errors });
 export const setGetStatusErrors = (errors) => ({ type: GET_STATUS_ERROR, payload: errors });
+
+export const getMonthlyData = (day) => ({ type: MONTHLY_DATA_START, payload: { day } });
+export const updateMonthlyData = (data) => ({ type: MONTHLY_DATA_SUCCESS, payload: data });
+export const setMonthlyDataErrors = (errors) => ({ type: MONTHLY_DATA_ERROR, payload: errors });
 
 export const getSessionId = (state) => state.windFarm.init.value.sessionId;
 export const getHandle = (state) => state.windFarm.init.value.handle;
@@ -41,9 +52,19 @@ export function* statusSaga() {
   }
 }
 
+export function* monthlyDataSaga({ payload: { day } }) {
+  try {
+    const response = yield call(api.windFarm.monthlyData, day);
+    yield put(updateMonthlyData(response.data));
+  } catch (error) {
+    yield put(setMonthlyDataErrors(getErrors(error)));
+  }
+}
+
 export function* sagas() {
   yield takeLatest(INIT_START, initializeSaga);
   yield takeLatest(GET_STATUS_START, statusSaga);
+  yield takeLatest(MONTHLY_DATA_START, monthlyDataSaga);
 }
 
 // Reducers
@@ -58,6 +79,7 @@ const initialRequestState = {
 export const initialState = {
   init: initialRequestState,
   status: initialRequestState,
+  monthlyData: initialRequestState,
 };
 
 export const reducer = (state = initialState, action) => {
@@ -76,7 +98,11 @@ export const reducer = (state = initialState, action) => {
         init: {
           ...initialRequestState,
           success: true,
-          value: payload,
+          value: {
+            ...payload,
+            minDate: parseApiDate(payload.minDate),
+            maxDate: parseApiDate(payload.maxDate),
+          },
         },
       };
     case INIT_ERROR:
@@ -114,6 +140,30 @@ export const reducer = (state = initialState, action) => {
       return {
         ...state,
         status: {
+          ...initialRequestState,
+          errors: payload,
+        },
+      };
+    case MONTHLY_DATA_START:
+      return {
+        ...state,
+        monthlyData: {
+          ...state.status, onGoing: true, success: false, errors: [],
+        },
+      };
+    case MONTHLY_DATA_SUCCESS:
+      return {
+        ...state,
+        monthlyData: {
+          ...initialRequestState,
+          success: true,
+          value: payload,
+        },
+      };
+    case MONTHLY_DATA_ERROR:
+      return {
+        ...state,
+        monthlyData: {
           ...initialRequestState,
           errors: payload,
         },

@@ -1,4 +1,7 @@
-import { format, parse } from 'date-fns';
+import { format as fnsFormat, parse } from 'date-fns';
+import { fr } from 'date-fns/locale';
+
+export const format = (date, formatStr) => fnsFormat(date, formatStr, { locale: fr });
 
 export const formatDate = (date) => format(date, 'dd/MM/yyyy');
 

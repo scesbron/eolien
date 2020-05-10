@@ -29,6 +29,7 @@ export const password = {
 export const windFarm = {
   initialize: () => axios.get(`${API_BASE_URL}/wind_farm/init`),
   status: (sessionId, handle) => axios.get(`${API_BASE_URL}/wind_farm/status`, { params: { sessionId, handle } }),
+  monthlyData: (day) => axios.get(`${API_BASE_URL}/wind_farm/monthly_data`, { params: { day } }),
 };
 
 export const setAuthorization = (authorization, rememberMe) => {

@@ -4,7 +4,7 @@ import {
 } from 'react-router-dom';
 import BottomNavigation from '@material-ui/core/BottomNavigation';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
-import HomeIcon from '@material-ui/icons/Home';
+import BarChartIcon from '@material-ui/icons/BarChart';
 import PersonIcon from '@material-ui/icons/Person';
 import EuroIcon from '@material-ui/icons/Euro';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
@@ -96,9 +96,9 @@ function App({ user, logout }) {
         >
           <BottomNavigationAction
             to="/"
-            label="Accueil"
+            label="Production"
             value="home"
-            icon={<HomeIcon />}
+            icon={<BarChartIcon />}
           />
           <BottomNavigationAction
             to="/profil"

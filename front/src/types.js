@@ -23,6 +23,12 @@ export const initType = shape({
   handle: string,
 });
 
+export const monthlyDataType = shape({
+  productibles: arrayOf(number),
+  labels: arrayOf(string),
+  data: arrayOf(number),
+});
+
 export const requestType = (mainType) => shape({
   onGoing: bool,
   success: bool,

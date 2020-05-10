@@ -14,6 +14,7 @@ Rails.application.routes.draw do
     resource :wind_farm, only: [] do
       get :init, on: :collection
       get :status, on: :collection
+      get :monthly_data, on: :collection
     end
   end
 end
