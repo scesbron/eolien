@@ -1,8 +1,7 @@
 /* eslint-disable no-nested-ternary */
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Button } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import Chart from 'react-apexcharts';
@@ -45,19 +44,17 @@ const Title = styled(Typography)`
 const RealTimeData = ({
   init, status, initialize, getStatus,
 }) => {
-  const update = useCallback(() => {
+  useEffect(() => {
     if (status.errors.length) {
       initialize();
-    } else if (!status.onGoing && !status.errors.length) {
-      getStatus();
     }
-  }, [status.errors.length, status.onGoing, initialize, getStatus]);
+  }, [status.errors.length, initialize]);
 
   useEffect(() => {
     let interval;
     if (init.success) {
-      update();
-      interval = setInterval(update, 2000);
+      getStatus();
+      interval = setInterval(getStatus, 2000);
     }
     return () => {
       if (interval) clearInterval(interval);
@@ -78,9 +75,6 @@ const RealTimeData = ({
     return (
       <StyledContainer>
         <Title variant="h4">Erreur de connexion au parc</Title>
-        <Button onClick={update} variant="outlined">
-          Rafraîchir
-        </Button>
       </StyledContainer>
     );
   }
@@ -109,7 +103,7 @@ const RealTimeData = ({
                         value: {
                           show: true,
                           color: '#81c784',
-                          formatter: (val) => `${parseInt(val * 24, 10)} kwh`,
+                          formatter: (val) => `${parseInt((val * init.value.turbinePower) / 100, 10)} kwh`,
                         },
                       },
                     },
@@ -122,7 +116,7 @@ const RealTimeData = ({
                   },
                   labels: [turbine.name],
                 }}
-                series={[turbine.instantPower / 24]}
+                series={[Math.min(100, (turbine.instantPower / init.value.turbinePower) * 100)]}
                 type="radialBar"
                 width="250"
               />

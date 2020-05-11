@@ -148,7 +148,7 @@ export const reducer = (state = initialState, action) => {
       return {
         ...state,
         monthlyData: {
-          ...state.status, onGoing: true, success: false, errors: [],
+          ...state.monthlyData, onGoing: true, success: false, errors: [],
         },
       };
     case MONTHLY_DATA_SUCCESS:
