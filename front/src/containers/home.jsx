@@ -75,7 +75,7 @@ const Home = ({ init, initialize }) => {
           value={location.pathname}
           aria-label="Visualisation des données du parc"
         >
-          <Tab label="Temps réel" {...a11yProps(0)} value={REAL_TIME_DATA} component={Link} to={REAL_TIME_DATA} />
+          <Tab label="Actuel" {...a11yProps(0)} value={REAL_TIME_DATA} component={Link} to={REAL_TIME_DATA} />
           <Tab label="Quotidien" {...a11yProps(1)} value={DAILY_DATA} component={Link} to={DAILY_DATA} />
           <Tab label="Mensuel" {...a11yProps(1)} value={MONTHLY_DATA} component={Link} to={MONTHLY_DATA} />
           <Tab label="Annuel" {...a11yProps(2)} value={YEARLY_DATA} component={Link} to={YEARLY_DATA} />
