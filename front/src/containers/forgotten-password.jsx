@@ -52,23 +52,25 @@ const useStyles = makeStyles({
 });
 
 const ForgottenPassword = ({
-  submitting, submitted, errors, forgottenPassword, setErrors,
+  asking, asked, errors, forgottenPassword, setErrors,
 }) => {
   const classes = useStyles();
   const history = useHistory();
   const query = useQuery();
+  const [submitted, setSubmitted] = useState(false);
   const [success, setSuccess] = useState(false);
   const buttonClass = success ? classes.buttonSuccess : classes.button;
 
   useEffect(() => { setErrors(); }, [setErrors]);
   useEffect(() => {
-    if (submitted) {
+    if (submitted && asked) {
       setSuccess(true);
       setTimeout(() => history.push(LOGIN), 1000);
     }
-  }, [history, submitted]);
+  }, [history, asked, submitted]);
 
   const onSubmit = useCallback((values) => {
+    setSubmitted(true);
     forgottenPassword(values.username);
   }, [forgottenPassword]);
 
@@ -91,7 +93,7 @@ const ForgottenPassword = ({
               </Alert>
             )}
             <TextField label="Nom d'utilisateur" name="username" required />
-            <Button type="submit" variant="contained" color="primary" className={buttonClass} disabled={submitting}>
+            <Button type="submit" variant="contained" color="primary" className={buttonClass} disabled={asking}>
               {success ? 'Email de réinitialisation envoyé' : 'Envoyer'}
             </Button>
             <Link component={RouterLink} to={LOGIN} className={classes.link}>
@@ -105,16 +107,16 @@ const ForgottenPassword = ({
 };
 
 ForgottenPassword.propTypes = {
-  submitting: PropTypes.bool.isRequired,
-  submitted: PropTypes.bool.isRequired,
+  asking: PropTypes.bool.isRequired,
+  asked: PropTypes.bool.isRequired,
   errors: PropTypes.arrayOf(PropTypes.string).isRequired,
   forgottenPassword: PropTypes.func.isRequired,
   setErrors: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
-  submitting: state.user.forgottenPasswordAsking,
-  submitted: state.user.forgottenPasswordAsked,
+  asking: state.user.forgottenPasswordAsking,
+  asked: state.user.forgottenPasswordAsked,
   errors: state.user.errors,
 });
 

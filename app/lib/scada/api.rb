@@ -78,12 +78,17 @@ module Scada
     end
 
     def self.turbine_ten_minutes_values(session_id, wind_turbine, start_time, end_time)
-      result = []
+      real_end_time = end_time > Time.now ? Time.now : end_time
+      real_end_time = Time.at(real_end_time.to_i - (real_end_time.to_i % 10.minutes))
+      real_start_time = Time.at(start_time.to_i - (start_time.to_i % 10.minutes))
+      request = turbine_ten_minutes_values_request(session_id, wind_turbine, real_start_time, real_end_time)
+      Rails.logger.debug request
       response = post_with_session_id(
         session_id,
         "#{URL}/nc2/services/MessageService",
-        turbine_ten_minutes_values_request(session_id, wind_turbine, start_time, end_time)
+        request
       )
+      Rails.logger.debug response.body
       data = Hash.from_xml(response.body)['Envelope']['Body']['get10minValuesRangeResponse']['OL']['LI'].map do |str_value|
         str_value.split(',', -1)
       end
@@ -118,7 +123,7 @@ module Scada
       )
     end
 
-    def self.post_with_session_id(session_id, url, body, timeout: 5)
+    def self.post_with_session_id(session_id, url, body, timeout: 10)
       Typhoeus.post(
         url,
         body: body,
@@ -231,8 +236,8 @@ module Scada
         <kks>ANA17.10mav</kks>
         <kks>ANA80.10mav</kks>
       </kksList>
-      <fromDateTime>#{start_time.strftime('%Y-%m-%d-%H:%M')}</fromDateTime>
-      <toDateTime>#{end_time.strftime('%Y-%m-%d-%H:%M')}</toDateTime>
+      <fromDateTime>#{start_time.utc.strftime('%Y-%m-%d-%H:%M')}</fromDateTime>
+      <toDateTime>#{end_time.utc.strftime('%Y-%m-%d-%H:%M')}</toDateTime>
     </get10minValuesRange>
   </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>)
@@ -250,12 +255,12 @@ module Scada
       <RFCName>#{wind_turbine.wea_name}</RFCName>
       <kksList>
         <kks>BHA10FE012.10mav</kks>
-        <kks>ANA085.10mav</kks>
+        <kks>ANA085.10mmin</kks>
         <kks>MDL10FS001.10mav</kks>
         <kks>MDL10FG001.10mav</kks>
       </kksList>
-      <fromDateTime>#{start_time.strftime('%Y-%m-%d-%H:%M')}</fromDateTime>
-      <toDateTime>#{end_time.strftime('%Y-%m-%d-%H:%M')}</toDateTime>
+      <fromDateTime>#{start_time.utc.strftime('%Y-%m-%d-%H:%M')}</fromDateTime>
+      <toDateTime>#{end_time.utc.strftime('%Y-%m-%d-%H:%M')}</toDateTime>
     </get10minValuesRange>
   </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>)

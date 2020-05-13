@@ -116,7 +116,7 @@ const RealTimeData = ({
                   },
                   labels: [turbine.name],
                 }}
-                series={[Math.min(100, (turbine.instantPower / init.value.turbinePower) * 100)]}
+                series={[(turbine.instantPower / init.value.turbinePower) * 100]}
                 type="radialBar"
                 width="250"
               />

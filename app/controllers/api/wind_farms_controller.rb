@@ -23,6 +23,22 @@ module Api
       render json: Scada::Api.status(params[:sessionId], params[:handle], current_user.company.wind_farm)
     end
 
+    def daily_data
+      start_time = Date.parse(params[:day]).to_time.utc
+      end_time = start_time + 24.hours
+      wind_farm = current_user.company.wind_farm
+      data = wind_farm.wind_turbines.enabled.map do |turbine|
+        turbine_data = Scada::Api.turbine_ten_minutes_values(params[:sessionId], turbine, start_time, end_time)
+        {
+          name: turbine.name,
+          labels: turbine_data.map { |datum| datum.time.localtime.min.zero? ? datum.time.localtime.strftime('%H') : '' },
+          power: turbine_data.map(&:active_power),
+          wind_speed: turbine_data.map(&:wind_speed)
+        }
+      end
+      render json: data
+    end
+
     def monthly_data
       @day = get_day
       @productibles = Productible.where(month: @day.month).to_a

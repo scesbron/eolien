@@ -15,6 +15,7 @@ Rails.application.routes.draw do
       get :init, on: :collection
       get :status, on: :collection
       get :monthly_data, on: :collection
+      get :daily_data, on: :collection
     end
   end
 end

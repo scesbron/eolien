@@ -29,6 +29,15 @@ export const monthlyDataType = shape({
   data: arrayOf(number),
 });
 
+export const dailyDataType = arrayOf(
+  shape({
+    name: string,
+    labels: arrayOf(string),
+    power: arrayOf(number),
+    windSpeed: arrayOf(number),
+  }),
+);
+
 export const requestType = (mainType) => shape({
   onGoing: bool,
   success: bool,

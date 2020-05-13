@@ -17,6 +17,10 @@ export const MONTHLY_DATA_START = 'WIND_FARM_MONTHLY_DATA_START';
 export const MONTHLY_DATA_SUCCESS = 'WIND_FARM_MONTHLY_DATA_SUCCESS';
 export const MONTHLY_DATA_ERROR = 'WIND_FARM_MONTHLY_DATA_ERROR';
 
+export const DAILY_DATA_START = 'WIND_FARM_DAILY_DATA_START';
+export const DAILY_DATA_SUCCESS = 'WIND_FARM_DAILY_DATA_SUCCESS';
+export const DAILY_DATA_ERROR = 'WIND_FARM_DAILY_DATA_ERROR';
+
 export const initialize = () => ({ type: INIT_START });
 export const initialized = (data) => ({ type: INIT_SUCCESS, payload: data });
 export const setInitErrors = (errors) => ({ type: INIT_ERROR, payload: errors });
@@ -28,6 +32,10 @@ export const setGetStatusErrors = (errors) => ({ type: GET_STATUS_ERROR, payload
 export const getMonthlyData = (day) => ({ type: MONTHLY_DATA_START, payload: { day } });
 export const updateMonthlyData = (data) => ({ type: MONTHLY_DATA_SUCCESS, payload: data });
 export const setMonthlyDataErrors = (errors) => ({ type: MONTHLY_DATA_ERROR, payload: errors });
+
+export const getDailyData = (day) => ({ type: DAILY_DATA_START, payload: { day } });
+export const updateDailyData = (data) => ({ type: DAILY_DATA_SUCCESS, payload: data });
+export const setDailyDataErrors = (errors) => ({ type: DAILY_DATA_ERROR, payload: errors });
 
 export const getSessionId = (state) => state.windFarm.init.value.sessionId;
 export const getHandle = (state) => state.windFarm.init.value.handle;
@@ -61,10 +69,21 @@ export function* monthlyDataSaga({ payload: { day } }) {
   }
 }
 
+export function* dailyDataSaga({ payload: { day } }) {
+  try {
+    const sessionId = yield select(getSessionId);
+    const response = yield call(api.windFarm.dailyData, sessionId, day);
+    yield put(updateDailyData(response.data));
+  } catch (error) {
+    yield put(setDailyDataErrors(getErrors(error)));
+  }
+}
+
 export function* sagas() {
   yield takeLatest(INIT_START, initializeSaga);
   yield takeLatest(GET_STATUS_START, statusSaga);
   yield takeLatest(MONTHLY_DATA_START, monthlyDataSaga);
+  yield takeLatest(DAILY_DATA_START, dailyDataSaga);
 }
 
 // Reducers
@@ -80,6 +99,7 @@ export const initialState = {
   init: initialRequestState,
   status: initialRequestState,
   monthlyData: initialRequestState,
+  dailyData: initialRequestState,
 };
 
 export const reducer = (state = initialState, action) => {
@@ -164,6 +184,30 @@ export const reducer = (state = initialState, action) => {
       return {
         ...state,
         monthlyData: {
+          ...initialRequestState,
+          errors: payload,
+        },
+      };
+    case DAILY_DATA_START:
+      return {
+        ...state,
+        dailyData: {
+          ...state.dailyData, onGoing: true, success: false, errors: [],
+        },
+      };
+    case DAILY_DATA_SUCCESS:
+      return {
+        ...state,
+        dailyData: {
+          ...initialRequestState,
+          success: true,
+          value: payload,
+        },
+      };
+    case DAILY_DATA_ERROR:
+      return {
+        ...state,
+        dailyData: {
           ...initialRequestState,
           errors: payload,
         },

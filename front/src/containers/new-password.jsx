@@ -65,23 +65,25 @@ const validate = (values) => {
 };
 
 const NewPassword = ({
-  submitting, submitted, errors, updatePassword, setErrors,
+  updating, updated, errors, updatePassword, setErrors,
 }) => {
   const classes = useStyles();
   const history = useHistory();
   const query = useQuery();
+  const [submitted, setSubmitted] = useState(false);
   const [success, setSuccess] = useState(false);
   const buttonClass = success ? classes.buttonSuccess : classes.button;
 
   useEffect(() => { setErrors(); }, [setErrors]);
   useEffect(() => {
-    if (submitted) {
+    if (submitted && updated) {
       setSuccess(true);
       setTimeout(() => history.push(LOGIN), 1000);
     }
-  }, [history, submitted]);
+  }, [history, submitted, updated]);
 
   const onSubmit = useCallback((values) => {
+    setSubmitted(true);
     updatePassword(query.get('token'), values.password, values.confirmation);
   }, [updatePassword, query]);
 
@@ -101,7 +103,7 @@ const NewPassword = ({
             )}
             <TextField label="Nouveau mot de passe" type="password" name="password" />
             <TextField label="Confirmez votre mot de passe" type="password" name="confirmation" />
-            <Button type="submit" variant="contained" color="primary" className={buttonClass} disabled={submitting}>
+            <Button type="submit" variant="contained" color="primary" className={buttonClass} disabled={updating}>
               {success ? 'Mot de passe modifié' : 'Changer mon mot de passe'}
             </Button>
           </form>
@@ -112,16 +114,16 @@ const NewPassword = ({
 };
 
 NewPassword.propTypes = {
-  submitting: PropTypes.bool.isRequired,
-  submitted: PropTypes.bool.isRequired,
+  updating: PropTypes.bool.isRequired,
+  updated: PropTypes.bool.isRequired,
   errors: PropTypes.arrayOf(PropTypes.string).isRequired,
   updatePassword: PropTypes.func.isRequired,
   setErrors: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
-  submitting: state.user.passwordUpdating,
-  submitted: state.user.passwordUpdated,
+  updating: state.user.passwordUpdating,
+  updated: state.user.passwordUpdated,
   errors: state.user.errors,
 });
 
