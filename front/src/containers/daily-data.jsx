@@ -9,7 +9,7 @@ import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import {
-  parse, isSameDay, isToday, subDays, addDays, isValid, isFuture, getMinutes,
+  parse, isSameDay, isToday, subDays, addDays, isValid, isFuture,
 } from 'date-fns';
 import Chart from 'react-apexcharts';
 
@@ -97,6 +97,7 @@ const DailyData = ({ init, dailyData, getDailyData }) => {
                 categories: turbineData.labels,
               },
               yaxis: {
+                min: 0,
                 max: init.value.turbinePower,
                 labels: {
                   formatter: (value) => parseInt(value, 10),
