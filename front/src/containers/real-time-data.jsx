@@ -18,9 +18,10 @@ const Farm = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-wrap: wrap;
 `;
 
-const Turbine = styled.div`
+const StyledTurbine = styled.div`
   width: 250px;
   display: flex;
   flex-direction: column;
@@ -40,6 +41,65 @@ const StyledContainer = styled(Container)`
 const Title = styled(Typography)`
   padding: 1rem 0;
 `;
+
+const sum = (array, value) => array.reduce((acc, item) => acc + item[value], 0);
+const avg = (array, value) => sum(array, value) / array.length;
+
+const Turbine = ({
+  name, power, windSpeed, maxPower,
+}) => (
+  <StyledTurbine key={name}>
+    <ChartContainer>
+      <Chart
+        options={{
+          plotOptions: {
+            radialBar: {
+              startAngle: -135,
+              endAngle: 135,
+              hollow: {
+                margin: 0,
+                size: '70%',
+              },
+              dataLabels: {
+                name: {
+                  show: true,
+                  color: '#388e3c',
+                },
+                value: {
+                  show: true,
+                  color: '#81c784',
+                  formatter: (val) => (
+                    `${parseInt((val * maxPower) / 100, 10)} kwh`
+                  ),
+                },
+              },
+            },
+          },
+          fill: {
+            colors: ['#388e3c'],
+          },
+          stroke: {
+            lineCap: 'round',
+          },
+          labels: [name],
+        }}
+        series={[(power / maxPower) * 100]}
+        type="radialBar"
+        width="250"
+      />
+    </ChartContainer>
+    <Typography>
+      {`Vent : ${windSpeed ? windSpeed.toFixed(2) : '?'} m/s`}
+    </Typography>
+  </StyledTurbine>
+);
+
+Turbine.propTypes = {
+  name: PropTypes.string.isRequired,
+  power: PropTypes.number.isRequired,
+  windSpeed: PropTypes.number.isRequired,
+  maxPower: PropTypes.number.isRequired,
+};
 
 const RealTimeData = ({
   init, status, initialize, getStatus,
@@ -81,52 +141,25 @@ const RealTimeData = ({
 
   return (
     <StyledContainer disableGutters>
-      <Farm>
-        {(status.value || []).map((turbine) => (
-          <Turbine key={turbine.name}>
-            <ChartContainer>
-              <Chart
-                options={{
-                  plotOptions: {
-                    radialBar: {
-                      startAngle: -135,
-                      endAngle: 135,
-                      hollow: {
-                        margin: 0,
-                        size: '70%',
-                      },
-                      dataLabels: {
-                        name: {
-                          show: true,
-                          color: '#388e3c',
-                        },
-                        value: {
-                          show: true,
-                          color: '#81c784',
-                          formatter: (val) => `${parseInt((val * init.value.turbinePower) / 100, 10)} kwh`,
-                        },
-                      },
-                    },
-                  },
-                  fill: {
-                    colors: ['#388e3c'],
-                  },
-                  stroke: {
-                    lineCap: 'round',
-                  },
-                  labels: [turbine.name],
-                }}
-                series={[(turbine.instantPower / init.value.turbinePower) * 100]}
-                type="radialBar"
-                width="250"
-              />
-            </ChartContainer>
-            <Typography>
-              {`Vent : ${turbine.windSpeed ? turbine.windSpeed.toFixed(2) : '?'} m/s`}
-            </Typography>
-          </Turbine>
-        ))}
-      </Farm>
+      {status.value && init.value && (
+        <Farm>
+          <Turbine
+            name="Parc"
+            power={sum(status.value, 'instantPower')}
+            maxPower={init.value.turbinePower * status.value.length}
+            windSpeed={avg(status.value, 'windSpeed')}
+          />
+          {status.value.map((turbine) => (
+            <Turbine
+              key={turbine.name}
+              name={turbine.name}
+              power={turbine.instantPower}
+              windSpeed={turbine.windSpeed}
+              maxPower={init.value.turbinePower}
+            />
+          ))}
+        </Farm>
+      )}
     </StyledContainer>
   );
 };
