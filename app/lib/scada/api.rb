@@ -82,13 +82,11 @@ module Scada
       real_end_time = Time.at(real_end_time.to_i - (real_end_time.to_i % 10.minutes))
       real_start_time = Time.at(start_time.to_i - (start_time.to_i % 10.minutes))
       request = turbine_ten_minutes_values_request(session_id, wind_turbine, real_start_time, real_end_time)
-      Rails.logger.debug request
       response = post_with_session_id(
         session_id,
         "#{URL}/nc2/services/MessageService",
         request
       )
-      Rails.logger.debug response.body
       data = Hash.from_xml(response.body)['Envelope']['Body']['get10minValuesRangeResponse']['OL']['LI'].map do |str_value|
         str_value.split(',', -1)
       end
@@ -124,7 +122,8 @@ module Scada
     end
 
     def self.post_with_session_id(session_id, url, body, timeout: 10)
-      Typhoeus.post(
+      Rails.logger.debug body
+      response = Typhoeus.post(
         url,
         body: body,
         timeout: timeout,
@@ -133,6 +132,8 @@ module Scada
         ssl_verifypeer: false,
         ssl_verifyhost: 0
       )
+      Rails.logger.debug response.body
+      response
     end
 
     def self.to_f(value)
@@ -156,7 +157,7 @@ module Scada
         <returnSensorStatus>1</returnSensorStatus>
       </options>
       <kksList>
-#{wind_farm.wind_turbines.enabled.flat_map { |turbine| wind_turbine_status(turbine) }.first}
+#{wind_farm.wind_turbines.enabled.map { |turbine| wind_turbine_status(turbine) }.join("\n")}
       </kksList>
     </subscribeRealTimeValues>
   </SOAP-ENV:Body>
