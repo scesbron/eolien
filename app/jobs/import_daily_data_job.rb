@@ -8,6 +8,8 @@ class ImportDailyDataJob < ApplicationJob
     (start_date..end_date).each do |date|
       data = Scada::Api.daily_production(session_id, wind_farm, date)
       turbines.each_with_index do |turbine, index|
+        next unless data[index]
+
         datum = DailyDatum.find_or_create_by(day: date, wind_turbine: turbine)
         datum.update(
           production: data[index].production,
