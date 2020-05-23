@@ -10,11 +10,14 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
+import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
 
 import { userType } from '../types';
 import { formatCurrency } from '../utils/currency';
 import { formatDate } from '../utils/date';
 import { sum } from '../utils/math';
+import Attestation from '../documents/attestation';
+import { SIGNATURE } from '../constants/images';
 
 const useStyles = makeStyles({
   container: {
@@ -73,6 +76,12 @@ const Investment = ({ user }) => {
       {renderTable(user.shares, 'share')}
       <Typography variant="h4" className={classes.title}>Prêts</Typography>
       {renderTable(user.loans, 'loan')}
+      <PDFViewer width="100%" height="400px">
+        <Attestation />
+      </PDFViewer>
+      <PDFDownloadLink document={<Attestation />} fileName="attestation.pdf">
+        {({ loading }) => (loading ? 'Chargement du document...' : 'Télécharger mon attestation')}
+      </PDFDownloadLink>
     </Container>
   );
 };
