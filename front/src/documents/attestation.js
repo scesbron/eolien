@@ -1,6 +1,7 @@
 import React from 'react';
-import { Page, Text, View, Image, Document, StyleSheet } from '@react-pdf/renderer';
-import { SIGNATURE } from '../constants/images';
+import {
+  Page, Text, View, Image, Document, StyleSheet,
+} from '@react-pdf/renderer';
 
 import hyrome from '../assets/images/hyrome.png';
 import citeole from '../assets/images/citeole.png';
@@ -50,7 +51,7 @@ const Attestation = () => (
         <Image src={citeole} style={styles.citeole} />
       </View>
       <View style={styles.textSection}>
-        <Text>Cit'Eole Hyrôme</Text>
+        <Text>Cit&apos;Eole Hyrôme</Text>
         <Text>Société par actions simplifiée au capital de 431 200 €</Text>
         <Text>1 Le Vau Chaumier, Chanzeaux</Text>
         <Text>49750 CHEMILLE EN ANJOU</Text>
