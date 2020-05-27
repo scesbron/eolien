@@ -24,7 +24,7 @@ module Api
     end
 
     def daily_data
-      start_time = Date.parse(params[:day]).to_time.utc
+      start_time = Time.parse(params[:day]).localtime.beginning_of_day.utc
       end_time = start_time + 24.hours
       wind_farm = current_user.company.wind_farm
       data = wind_farm.wind_turbines.enabled.map do |turbine|
