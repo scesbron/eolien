@@ -201,7 +201,7 @@ module Scada
   <SOAP-ENV:Body>
     <getDailyReport>
       <weanameList>
-#{wind_farm.wind_turbines.enabled.flat_map { |turbine| "        <weaname>#{turbine.wea_name}</weaname>" }.first}
+#{wind_farm.wind_turbines.enabled.flat_map { |turbine| "        <weaname>#{turbine.wea_name}</weaname>" }.join("\n")}
       </weanameList>
       <kksList>
         <kks>TIMER01.daily</kks>
