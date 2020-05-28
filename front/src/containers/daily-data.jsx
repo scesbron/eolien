@@ -32,6 +32,60 @@ const Header = styled.div`
   justify-content: center
 `;
 
+const sumArrays = (arrays) => {
+  const nbArrays = arrays.length;
+  if (nbArrays > 0 && arrays[0]) {
+    return arrays[0].map((value, index) => {
+      let sum = value;
+      for (let cpt = 1; cpt < nbArrays; cpt += 1) {
+        sum += arrays[cpt][index];
+      }
+      return sum;
+    });
+  }
+  return [];
+};
+
+const DailyChart = ({ labels, max, data }) => (
+  <Chart
+    options={{
+      plotOptions: {
+        bar: {
+          horizontal: false,
+        },
+      },
+      dataLabels: {
+        enabled: false,
+      },
+      xaxis: {
+        categories: labels,
+      },
+      yaxis: {
+        min: 0,
+        max,
+        labels: {
+          formatter: (value) => parseInt(value, 10),
+        },
+      },
+      stroke: {
+        curve: 'smooth',
+      },
+    }}
+    series={[{
+      name: 'Production',
+      data,
+    }]}
+    type="line"
+    height="300px"
+  />
+);
+
+DailyChart.propTypes = {
+  labels: PropTypes.arrayOf(PropTypes.string).isRequired,
+  max: PropTypes.number.isRequired,
+  data: PropTypes.arrayOf(PropTypes.number).isRequired,
+};
+
 const DailyData = ({ init, dailyData, getDailyData }) => {
   const [day, setDay] = useState(new Date());
 
@@ -80,42 +134,24 @@ const DailyData = ({ init, dailyData, getDailyData }) => {
       {dailyData.errors.length > 0 && (
         <Title variant="h4">Erreur de connexion au parc</Title>
       )}
-      {dailyData.success && isValid(day) && dailyData.value.map((turbineData) => (
-        <div key={turbineData.name}>
-          <Typography variant="h4">{turbineData.name}</Typography>
-          <Chart
-            options={{
-              plotOptions: {
-                bar: {
-                  horizontal: false,
-                },
-              },
-              dataLabels: {
-                enabled: false,
-              },
-              xaxis: {
-                categories: turbineData.labels,
-              },
-              yaxis: {
-                min: 0,
-                max: init.value.turbinePower,
-                labels: {
-                  formatter: (value) => parseInt(value, 10),
-                },
-              },
-              stroke: {
-                curve: 'smooth',
-              },
-            }}
-            series={[{
-              name: 'Production',
-              data: turbineData.power,
-            }]}
-            type="line"
-            height="300px"
-          />
-        </div>
-      ))}
+      {dailyData.success && isValid(day) && (
+        <>
+          <div>
+            <Typography variant="h4">Parc</Typography>
+            <DailyChart
+              labels={dailyData.value[0].labels}
+              max={dailyData.value.length * init.value.turbinePower}
+              data={sumArrays(dailyData.value.map((turbineData) => turbineData.power))}
+            />
+          </div>
+          {dailyData.value.map((turbineData) => (
+            <div key={turbineData.name}>
+              <Typography variant="h4">{turbineData.name}</Typography>
+              <DailyChart labels={turbineData.labels} max={init.value.turbinePower} data={turbineData.power} />
+            </div>
+          ))}
+        </>
+      )}
     </StyledContainer>
   );
 };
