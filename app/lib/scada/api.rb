@@ -256,7 +256,7 @@ module Scada
       <RFCName>#{wind_turbine.wea_name}</RFCName>
       <kksList>
         <kks>BHA10FE012.10mav</kks>
-        <kks>ANA085.10mmin</kks>
+        <kks>ANA085.10mav</kks>
         <kks>MDL10FS001.10mav</kks>
         <kks>MDL10FG001.10mav</kks>
       </kksList>

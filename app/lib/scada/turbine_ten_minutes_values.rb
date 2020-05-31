@@ -14,15 +14,5 @@ module Scada
     def running?
       (11..15).include?(@operating_state)
     end
-
-    def state
-      if operating_state.zero?
-        'NO DATA'
-      elsif running?
-        'RUN'
-      else
-        "STATE : #{value.operating_state}"
-      end
-    end
   end
 end

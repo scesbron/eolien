@@ -40,7 +40,7 @@ class SendRealTimeDataToTraderJob < ApplicationJob
             value.time.utc.strftime(DATE_FORMAT),
             format('E%<number>02d', number: wind_turbine.number),
             value.active_power,
-            value.state,
+            value.operating_state,
             value.wind_speed,
             value.wind_direction
           ]
