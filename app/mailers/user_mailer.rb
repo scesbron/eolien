@@ -17,4 +17,9 @@ class UserMailer < ApplicationMailer
     @content = content
     mail(to: user.email, subject: subject)
   end
+
+  def error(subject, error)
+    @error = error
+    mail(to: ENV['MAILER_SENDER'], subject: subject)
+  end
 end

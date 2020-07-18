@@ -1,0 +1,9 @@
+%p
+  Une erreur est survenue dans l'application
+%pre
+  = @error.message
+%pre
+  - @error.backtrace.each do |trace|
+    = trace
+    %br
+

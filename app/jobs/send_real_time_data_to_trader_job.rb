@@ -11,6 +11,8 @@ class SendRealTimeDataToTraderJob < ApplicationJob
       generate_global_file(wind_farm, session_id, start_time, end_time),
       generate_unit_file(wind_farm, session_id, start_time, end_time)
     ).deliver_now!
+  rescue StandardError => e
+    UserMailer.error('Une erreur est survenue lors de l\'envoi des données temps réel', e).deliver_now!
   end
 
   private
