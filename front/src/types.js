@@ -24,9 +24,14 @@ export const initType = shape({
 });
 
 export const monthlyDataType = shape({
-  productibles: arrayOf(number),
+  productibles: arrayOf(shape({
+    name: string,
+    value: number,
+  })),
   labels: arrayOf(string),
   data: arrayOf(number),
+  ratio: number,
+  production: number,
 });
 
 export const dailyDataType = arrayOf(

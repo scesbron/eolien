@@ -4,8 +4,8 @@ class ImportDailyDataJob < ApplicationJob
 
   def perform(wind_farm, start_date, end_date)
     session_id = Scada::Api.login
-    turbines = wind_farm.wind_turbines.enabled
-    (start_date..end_date).each do |date|
+    turbines = wind_farm.wind_turbines.ordered_by_number.enabled
+    ([START_DATE, start_date].max..end_date).each do |date|
       data = Scada::Api.daily_production(session_id, wind_farm, date)
       turbines.each_with_index do |turbine, index|
         next unless data[index]

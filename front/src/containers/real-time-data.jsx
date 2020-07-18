@@ -64,10 +64,12 @@ const Turbine = ({
                 name: {
                   show: true,
                   color: '#388e3c',
+                  fontSize: '1rem',
                 },
                 value: {
                   show: true,
                   color: '#81c784',
+                  fontSize: '1rem',
                   formatter: (val) => (
                     `${parseInt((val * maxPower) / 100, 10)} kwh`
                   ),
@@ -142,23 +144,27 @@ const RealTimeData = ({
   return (
     <StyledContainer disableGutters>
       {status.value && init.value && (
-        <Farm>
-          <Turbine
-            name="Parc"
-            power={sum(status.value, 'instantPower')}
-            maxPower={init.value.turbinePower * status.value.length}
-            windSpeed={avg(status.value, 'windSpeed')}
-          />
-          {status.value.map((turbine) => (
+        <>
+          <Farm>
             <Turbine
-              key={turbine.name}
-              name={turbine.name}
-              power={turbine.instantPower}
-              windSpeed={turbine.windSpeed}
-              maxPower={init.value.turbinePower}
+              name="Parc"
+              power={sum(status.value, 'instantPower')}
+              maxPower={init.value.turbinePower * status.value.length}
+              windSpeed={avg(status.value, 'windSpeed')}
             />
-          ))}
-        </Farm>
+          </Farm>
+          <Farm>
+            {status.value.map((turbine) => (
+              <Turbine
+                key={turbine.name}
+                name={turbine.name}
+                power={turbine.instantPower}
+                windSpeed={turbine.windSpeed}
+                maxPower={init.value.turbinePower}
+              />
+            ))}
+          </Farm>
+        </>
       )}
     </StyledContainer>
   );

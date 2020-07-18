@@ -33,7 +33,7 @@ module Scada
         status_request(session_id, handle),
       )
       values = Hash.from_xml(response.body)['Envelope']['Body']['getRealTimeValuesByHandleResponse']['kksArray'].scan(/(\{.*?\})?,?/)
-      wind_farm.wind_turbines.enabled.map.with_index do |wind_turbine, index|
+      wind_farm.wind_turbines.ordered_by_number.enabled.map.with_index do |wind_turbine, index|
         WindTurbineStatus.new(
           wind_turbine.name,
           to_f(values[1 + index * nb_values]),
@@ -157,7 +157,7 @@ module Scada
         <returnSensorStatus>1</returnSensorStatus>
       </options>
       <kksList>
-#{wind_farm.wind_turbines.enabled.map { |turbine| wind_turbine_status(turbine) }.join("\n")}
+#{wind_farm.wind_turbines.ordered_by_number.enabled.map { |turbine| wind_turbine_status(turbine) }.join("\n")}
       </kksList>
     </subscribeRealTimeValues>
   </SOAP-ENV:Body>
@@ -201,7 +201,7 @@ module Scada
   <SOAP-ENV:Body>
     <getDailyReport>
       <weanameList>
-#{wind_farm.wind_turbines.enabled.flat_map { |turbine| "        <weaname>#{turbine.wea_name}</weaname>" }.join("\n")}
+#{wind_farm.wind_turbines.ordered_by_number.enabled.flat_map { |turbine| "        <weaname>#{turbine.wea_name}</weaname>" }.join("\n")}
       </weanameList>
       <kksList>
         <kks>TIMER01.daily</kks>

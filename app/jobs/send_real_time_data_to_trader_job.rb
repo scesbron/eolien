@@ -34,7 +34,7 @@ class SendRealTimeDataToTraderJob < ApplicationJob
 
     CSV.generate(headers: true, col_sep: ';', encoding: Encoding::UTF_8) do |csv|
       csv << headers
-      wind_farm.wind_turbines.enabled.each do |wind_turbine|
+      wind_farm.wind_turbines.ordered_by_number.enabled.each do |wind_turbine|
         Scada::Api.turbine_ten_minutes_values(session_id, wind_turbine, start_time, end_time).reverse.each do |value|
           csv << [
             value.time.utc.strftime(DATE_FORMAT),

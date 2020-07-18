@@ -27,7 +27,7 @@ module Api
       start_time = Time.parse(params[:day]).localtime.beginning_of_day.utc
       end_time = start_time + 24.hours
       wind_farm = current_user.company.wind_farm
-      data = wind_farm.wind_turbines.enabled.map do |turbine|
+      data = wind_farm.wind_turbines.ordered_by_number.enabled.map do |turbine|
         turbine_data = Scada::Api.turbine_ten_minutes_values(params[:sessionId], turbine, start_time, end_time)
         {
           name: turbine.name,
@@ -41,7 +41,7 @@ module Api
 
     def monthly_data
       @day = get_day
-      @productibles = Productible.where(month: @day.month).to_a
+      productibles = Productible.where(month: @day.month).to_a
       @data = DailyDatum
                 .where('day >= ?', @day.beginning_of_month)
                 .where('day <= ?', @day.end_of_month)
@@ -49,12 +49,13 @@ module Api
                 .order(:day)
                 .pluck('day, sum(production - consumption)')
                 .map{|day, value| [day, value || 0]}
-      @ratio = @data.map(&:first).max.day * 1.0 / @day.end_of_month.day
-      @production = @data.map(&:last).sum
       render json: {
-        productibles: @productibles,
+        productibles: productibles,
         labels: @data.map{ |datum| I18n.l(datum[0], format: :day) },
-        values: @data.map{ |datum| datum[1] }
+        values: @data.map{ |datum| datum[1] },
+        goals: @data.map{ |_| (productibles.first.value / @day.end_of_month.day).round },
+        ratio: @data.map(&:first).max.day * 1.0 / @day.end_of_month.day,
+        production: @data.map(&:last).sum
       }
     end
 
@@ -62,7 +63,8 @@ module Api
 
     def get_day(name = :day)
       day = Date.parse(params[name])
-      minDate, maxDate = DailyDatum.pluck('min(day), max(day)').first
+      minDate = DailyDatum.pluck('min(day)').first
+      maxDate = Date.today
       day = minDate if day < minDate
       day = maxDate if day > maxDate
       return day
