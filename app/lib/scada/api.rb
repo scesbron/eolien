@@ -106,7 +106,7 @@ module Scada
     def self.headers(session_id)
       {
         'Content-Type'    => 'text/xml; charset=utf-8',
-        'Cookie'          => "NC2SESSIONID=#{session_id}; NCIILanguage=fr; active-nc2-session=true"
+        'Cookie'          => "NC2SESSIONID=#{session_id}; NCIILanguage=fr; NCIIClient=nc2; active-nc2-session=true"
       }
     end
 
@@ -226,21 +226,22 @@ module Scada
     def self.parc_ten_minutes_values_request(session_id, wind_farm, start_time, end_time)
       %(<?xml version='1.0' encoding='utf-8'?>
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
-  <SOAP-ENV:Header>
-    <ns1:session xmlns:ns1="http://nordex-online.com/xml/nc2/client/13/">#{session_id}</ns1:session>
-  </SOAP-ENV:Header>
-  <SOAP-ENV:Body>
-    <get10minValuesRange>
-      <RFCName>#{wind_farm.cwe_name}</RFCName>
-      <kksList>
-        <kks>ANA13.10mav</kks>
-        <kks>ANA17.10mav</kks>
-        <kks>ANA80.10mav</kks>
-      </kksList>
-      <fromDateTime>#{start_time.utc.strftime('%Y-%m-%d-%H:%M')}</fromDateTime>
-      <toDateTime>#{end_time.utc.strftime('%Y-%m-%d-%H:%M')}</toDateTime>
-    </get10minValuesRange>
-  </SOAP-ENV:Body>
+<SOAP-ENV:Header>
+  <ns1:session xmlns:ns1="http://nordex-online.com/xml/nc2/client/13/">#{session_id}</ns1:session>
+</SOAP-ENV:Header>
+<SOAP-ENV:Body>
+  <get10minValuesRange>
+    <RFCName>#{wind_farm.cwe_name}</RFCName>
+    <kksList>
+      <kks>ANA6.10mav</kks>
+      <kks>ANA6.10mmin</kks>
+      <kks>ANA6.10mmax</kks>
+      <kks>ANA6.10mdev</kks>
+    </kksList>
+    <fromDateTime>#{start_time.utc.strftime('%Y-%m-%d-%H:%M')}</fromDateTime>
+    <toDateTime>#{end_time.utc.strftime('%Y-%m-%d-%H:%M')}</toDateTime>
+  </get10minValuesRange>
+</SOAP-ENV:Body>
 </SOAP-ENV:Envelope>)
     end
 
