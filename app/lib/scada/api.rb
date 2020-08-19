@@ -72,7 +72,7 @@ module Scada
       data.first.each_with_index.map do |_, index|
         Scada::ParcTenMinutesValues.new(
           start_time + (10 * index).minutes,
-          data[0][index]
+          data[0][index] * 1000 # value is in MW but we wan kW
         )
       end
     end
