@@ -31,6 +31,7 @@ export const windFarm = {
   status: (sessionId, handle) => axios.get(`${API_BASE_URL}/wind_farm/status`, { params: { sessionId, handle } }),
   monthlyData: (day) => axios.get(`${API_BASE_URL}/wind_farm/monthly_data`, { params: { day } }),
   dailyData: (sessionId, day) => axios.get(`${API_BASE_URL}/wind_farm/daily_data`, { params: { sessionId, day } }),
+  yearlyData: (sessionId, startDate, endDate) => axios.get(`${API_BASE_URL}/wind_farm/yearly_data`, { params: { sessionId, startDate, endDate } }),
 };
 
 export const setAuthorization = (authorization, rememberMe) => {

@@ -71,7 +71,7 @@ const Turbine = ({
                   color: '#81c784',
                   fontSize: '1rem',
                   formatter: (val) => (
-                    `${parseInt((val * maxPower) / 100, 10)} kwh`
+                    `${parseInt((val * maxPower) / 100, 10)} kW`
                   ),
                 },
               },
@@ -145,6 +145,7 @@ const RealTimeData = ({
     <StyledContainer disableGutters>
       {status.value && init.value && (
         <>
+          <Typography>Production instantanée en kW</Typography>
           <Farm>
             <Turbine
               name="Parc"

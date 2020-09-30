@@ -24,7 +24,7 @@ const StyledContainer = styled(Container)`
 `;
 
 const Title = styled(Typography)`
-  margin: 1rem 0;
+  padding: 1rem 0;
 `;
 
 const Header = styled.div`
@@ -136,6 +136,7 @@ const DailyData = ({ init, dailyData, getDailyData }) => {
       )}
       {dailyData.success && isValid(day) && (
         <>
+          <Title>Production moyenne (kW) toutes les 10 min</Title>
           <div>
             <Typography variant="h4">Parc</Typography>
             <DailyChart
@@ -146,7 +147,7 @@ const DailyData = ({ init, dailyData, getDailyData }) => {
           </div>
           {dailyData.value.map((turbineData) => (
             <div key={turbineData.name}>
-              <Typography variant="h4">{turbineData.name}</Typography>
+              <Typography variant="h5">{turbineData.name}</Typography>
               <DailyChart labels={turbineData.labels} max={init.value.turbinePower} data={turbineData.power} />
             </div>
           ))}

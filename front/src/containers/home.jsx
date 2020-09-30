@@ -13,6 +13,7 @@ import Typography from '@material-ui/core/Typography';
 
 import RealTimeData from './real-time-data';
 import MonthlyData from './monthly-data';
+import YearlyData from './yearly-data';
 import {
   DAILY_DATA, MONTHLY_DATA, REAL_TIME_DATA, YEARLY_DATA,
 } from '../constants/routes';
@@ -89,7 +90,7 @@ const Home = ({ init, initialize }) => {
           <MonthlyData />
         </Route>
         <Route path={YEARLY_DATA}>
-          A venir
+          <YearlyData />
         </Route>
         <Route path={REAL_TIME_DATA}>
           <RealTimeData />

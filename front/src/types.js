@@ -29,7 +29,8 @@ export const monthlyDataType = shape({
     value: number,
   })),
   labels: arrayOf(string),
-  data: arrayOf(number),
+  values: arrayOf(number),
+  goals: arrayOf(number),
   ratio: number,
   production: number,
 });
@@ -42,6 +43,12 @@ export const dailyDataType = arrayOf(
     windSpeed: arrayOf(number),
   }),
 );
+
+export const yearlyDataType = shape({
+  labels: arrayOf(string),
+  values: arrayOf(number),
+  goals: arrayOf(number),
+});
 
 export const requestType = (mainType) => shape({
   onGoing: bool,

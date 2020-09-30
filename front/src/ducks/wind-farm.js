@@ -21,6 +21,10 @@ export const DAILY_DATA_START = 'WIND_FARM_DAILY_DATA_START';
 export const DAILY_DATA_SUCCESS = 'WIND_FARM_DAILY_DATA_SUCCESS';
 export const DAILY_DATA_ERROR = 'WIND_FARM_DAILY_DATA_ERROR';
 
+export const YEARLY_DATA_START = 'WIND_FARM_YEARLY_DATA_START';
+export const YEARLY_DATA_SUCCESS = 'WIND_FARM_YEARLY_DATA_SUCCESS';
+export const YEARLY_DATA_ERROR = 'WIND_FARM_YEARLY_DATA_ERROR';
+
 export const initialize = () => ({ type: INIT_START });
 export const initialized = (data) => ({ type: INIT_SUCCESS, payload: data });
 export const setInitErrors = (errors) => ({ type: INIT_ERROR, payload: errors });
@@ -36,6 +40,10 @@ export const setMonthlyDataErrors = (errors) => ({ type: MONTHLY_DATA_ERROR, pay
 export const getDailyData = (day) => ({ type: DAILY_DATA_START, payload: { day } });
 export const updateDailyData = (data) => ({ type: DAILY_DATA_SUCCESS, payload: data });
 export const setDailyDataErrors = (errors) => ({ type: DAILY_DATA_ERROR, payload: errors });
+
+export const getYearlyData = (startDate, endDate) => ({ type: YEARLY_DATA_START, payload: { startDate, endDate } });
+export const updateYearlyData = (data) => ({ type: YEARLY_DATA_SUCCESS, payload: data });
+export const setYearlyDataErrors = (errors) => ({ type: YEARLY_DATA_ERROR, payload: errors });
 
 export const getSessionId = (state) => state.windFarm.init.value.sessionId;
 export const getHandle = (state) => state.windFarm.init.value.handle;
@@ -79,11 +87,22 @@ export function* dailyDataSaga({ payload: { day } }) {
   }
 }
 
+export function* yearlyDataSaga({ payload: { startDate, endDate } }) {
+  try {
+    const sessionId = yield select(getSessionId);
+    const response = yield call(api.windFarm.yearlyData, sessionId, startDate, endDate);
+    yield put(updateYearlyData(response.data));
+  } catch (error) {
+    yield put(setYearlyDataErrors(getErrors(error)));
+  }
+}
+
 export function* sagas() {
   yield takeLatest(INIT_START, initializeSaga);
   yield takeLatest(GET_STATUS_START, statusSaga);
   yield takeLatest(MONTHLY_DATA_START, monthlyDataSaga);
   yield takeLatest(DAILY_DATA_START, dailyDataSaga);
+  yield takeLatest(YEARLY_DATA_START, yearlyDataSaga);
 }
 
 // Reducers
@@ -100,6 +119,7 @@ export const initialState = {
   status: initialRequestState,
   monthlyData: initialRequestState,
   dailyData: initialRequestState,
+  yearlyData: initialRequestState,
 };
 
 export const reducer = (state = initialState, action) => {
@@ -208,6 +228,30 @@ export const reducer = (state = initialState, action) => {
       return {
         ...state,
         dailyData: {
+          ...initialRequestState,
+          errors: payload,
+        },
+      };
+    case YEARLY_DATA_START:
+      return {
+        ...state,
+        yearlyData: {
+          ...state.yearlyData, onGoing: true, success: false, errors: [],
+        },
+      };
+    case YEARLY_DATA_SUCCESS:
+      return {
+        ...state,
+        yearlyData: {
+          ...initialRequestState,
+          success: true,
+          value: payload,
+        },
+      };
+    case YEARLY_DATA_ERROR:
+      return {
+        ...state,
+        yearlyData: {
           ...initialRequestState,
           errors: payload,
         },

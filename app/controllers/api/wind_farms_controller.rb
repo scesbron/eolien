@@ -59,6 +59,25 @@ module Api
       }
     end
 
+    def yearly_data
+      @start_date = get_day(:startDate)
+      @end_date = get_day(:endDate)
+      productibles = Productible.all.to_a
+      data = DailyDatum
+               .where('day >= ?', @start_date)
+               .where('day <= ?', @end_date)
+               .group('1,2')
+               .order('2,1')
+               .pluck('extract (month from day), extract (year from day), sum(production - consumption)')
+               .map{|value| [I18n.t("date.month_names")[value.first], value.last]}
+      labels = data.map(&:first)
+      render json: {
+        labels: labels,
+        values: data.map(&:last),
+        goals: labels.map{|label| productibles.select{|p| I18n.t("date.month_names")[p.month]==label}.first}.map(&:value)
+      }
+    end
+
     private
 
     def get_day(name = :day)
