@@ -104,6 +104,7 @@ const MonthlyData = ({ init, monthlyData, getMonthlyData }) => {
                     categories: monthlyData.value.labels,
                   },
                   yaxis: {
+                    min: 0,
                     max: init.value.turbinePower * init.value.turbineCount * 24,
                   },
                 }}
