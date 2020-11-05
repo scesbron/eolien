@@ -50,6 +50,7 @@ module Scada
         "#{URL}/nc2/services/MessageService",
         daily_production_request(session_id, wind_farm, date),
       )
+      Rails.logger.debug "Daily production for #{date}"
       [Hash.from_xml(response.body)['Envelope']['Body']['getDailyReportResponse']['OL']['LI']].flatten.map do |str_value|
         values = str_value.split(',')
         Scada::DailyProduction.new(
