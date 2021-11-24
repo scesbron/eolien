@@ -5,14 +5,16 @@ import IconButton from '@material-ui/core/IconButton';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import Typography from '@material-ui/core/Typography';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+import styled from 'styled-components';
+import Container from '@material-ui/core/Container';
+import Chart from 'react-apexcharts';
+import {
+  subYears, addYears, differenceInYears, subDays, min, isEqual, startOfMonth,
+} from 'date-fns';
 
 import { initType, requestType, yearlyDataType } from '../types';
 import * as duck from '../ducks/wind-farm';
 import { formatDate } from '../utils/date';
-import { subYears, addYears, differenceInYears, subDays, min, isEqual, startOfMonth } from "date-fns";
-import styled from 'styled-components';
-import Container from '@material-ui/core/Container';
-import Chart from "react-apexcharts";
 import Loader from '../components/loader';
 
 const StyledContainer = styled(Container)`
@@ -31,12 +33,9 @@ const Title = styled(Typography)`
 
 const maxValue = (init) => subDays(startOfMonth(init.value.maxDate), 1);
 
-const sum = (values) => {
-  let acc = 0;
-  return values.map((value) => acc = acc + (value / 1000));
-};
+const sum = (values) => values.reduce((acc, value) => acc + (value / 1000), 0);
 
-const YearlyChart = ({ labels, values, goals}) => (
+const YearlyChart = ({ labels, values, goals }) => (
   <Chart
     options={{
       markers: {
@@ -67,8 +66,13 @@ const YearlyChart = ({ labels, values, goals}) => (
   />
 );
 
-const YearlyData = ({ init, yearlyData, getYearlyData }) => {
+YearlyChart.propTypes = {
+  labels: PropTypes.arrayOf(PropTypes.string).isRequired,
+  values: PropTypes.arrayOf(PropTypes.number).isRequired,
+  goals: PropTypes.arrayOf(PropTypes.number).isRequired,
+};
 
+const YearlyData = ({ init, yearlyData, getYearlyData }) => {
   const [year, setYear] = useState();
 
   useEffect(() => {
@@ -79,25 +83,25 @@ const YearlyData = ({ init, yearlyData, getYearlyData }) => {
         endDate: min([subDays(addYears(startValue, 1), 1), maxValue(init)]),
       });
     }
-  }, [init.success]);
+  }, [init]);
 
   useEffect(() => {
     if (year) getYearlyData(year.startDate, year.endDate);
-  }, [getYearlyData, year])
+  }, [getYearlyData, year]);
 
   const onPrevious = useCallback(() => {
     setYear((previous) => ({
       startDate: subYears(previous.startDate, 1),
       endDate: subYears(previous.endDate, 1),
     }));
-  }, [])
+  }, []);
 
   const onNext = useCallback(() => {
     setYear((previous) => ({
       startDate: addYears(previous.startDate, 1),
       endDate: min([addYears(previous.endDate, 1), maxValue(init)]),
     }));
-  }, [])
+  }, [init]);
 
   if (!year) return null;
 
@@ -120,8 +124,8 @@ const YearlyData = ({ init, yearlyData, getYearlyData }) => {
           <Title variant="h6">Production par mois (MWh)</Title>
           <YearlyChart
             labels={yearlyData.value.labels}
-            values={yearlyData.value.values.map(value => value / 1000)}
-            goals={yearlyData.value.goals.map(value => value / 1000)}
+            values={yearlyData.value.values.map((value) => value / 1000)}
+            goals={yearlyData.value.goals.map((value) => value / 1000)}
           />
           <Title variant="h6">Cumul de production (MWh)</Title>
           <YearlyChart

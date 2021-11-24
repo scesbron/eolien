@@ -39,3 +39,20 @@ User.create(firstname: 'Sébastien', lastname: 'Cesbron', email:'seb@chezsoi.org
 - address: La Confordière - 49120 La Tourlandry
 - legal_agent: François Girard
 - phone: 06.80.63.06.54
+
+## Nouveaux projets
+
+Si on veut pouvoir gérer plusieurs parcs avec la même application
+- associer le productible à `WindFarm`
+- mettre dans `WindFarm` les paramètres de connexion au `Scada`
+- dans le `Scada` passer `WindFarm` comme paramètre à `init` pour avoir les données
+- permettre à un compte de pouvoir accéder à plusieurs parcs : comment concevoir cela ?
+
+Je pense que c'est mieux d'avoir une application mono parc que l'on instancie plusieurs fois
+- Voir si on simplifie des choses dans ce cas (est-ce que le concept de `WindFarm` est nécessaire ou bien c'est juste de la configuration) ?
+
+## Maj technique
+
+- simplifier les dépendances : passer à du redux classique voir utiliser react query et / ou recoil
+- utiliser typescript
+- voir s'il y a quelque chose de plus simple que material ui que je pourrais utiliser comme base pour les composants

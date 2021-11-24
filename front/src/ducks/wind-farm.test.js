@@ -1,9 +1,6 @@
-import { runSaga } from 'redux-saga';
 import axios from 'axios';
 
 import * as duck from './wind-farm';
-import { errorResponse, okResponse } from '../tests/test-helpers';
-import { API_BASE_URL } from '../config';
 
 jest.mock('axios');
 
