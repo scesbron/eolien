@@ -1,4 +1,4 @@
-lock '3.12.1'
+lock '3.16.0'
 
 set :application, 'eolien'
 set :repo_url, 'git@ct-lucas:seb/eolien.git'
