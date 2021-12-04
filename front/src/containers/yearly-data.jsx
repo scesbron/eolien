@@ -9,7 +9,7 @@ import styled from 'styled-components';
 import Container from '@material-ui/core/Container';
 import Chart from 'react-apexcharts';
 import {
-  subYears, addYears, differenceInYears, subDays, min, isEqual, startOfMonth,
+  subYears, addYears, subDays, addDays, min, max, isEqual, startOfMonth, startOfYear,
 } from 'date-fns';
 
 import { initType, requestType, yearlyDataType } from '../types';
@@ -33,7 +33,13 @@ const Title = styled(Typography)`
 
 const maxValue = (init) => subDays(startOfMonth(init.value.maxDate), 1);
 
-const sum = (values) => values.reduce((acc, value) => acc + (value / 1000), 0);
+const sum = (values) => {
+  let acc = 0;
+  return values.map((value) => {
+    acc += (value / 1000);
+    return acc;
+  });
+};
 
 const YearlyChart = ({ labels, values, goals }) => (
   <Chart
@@ -77,10 +83,10 @@ const YearlyData = ({ init, yearlyData, getYearlyData }) => {
 
   useEffect(() => {
     if (init.success) {
-      const startValue = addYears(init.value.minDate, differenceInYears(init.value.minDate, maxValue(init)));
+      const endDate = maxValue(init);
       setYear({
-        startDate: startValue,
-        endDate: min([subDays(addYears(startValue, 1), 1), maxValue(init)]),
+        startDate: startOfYear(endDate),
+        endDate,
       });
     }
   }, [init]);
@@ -91,14 +97,14 @@ const YearlyData = ({ init, yearlyData, getYearlyData }) => {
 
   const onPrevious = useCallback(() => {
     setYear((previous) => ({
-      startDate: subYears(previous.startDate, 1),
-      endDate: subYears(previous.endDate, 1),
+      startDate: max([init.value.minDate, subYears(previous.startDate, 1)]),
+      endDate: subDays(previous.startDate, 1),
     }));
-  }, []);
+  }, [init.value.minDate]);
 
   const onNext = useCallback(() => {
     setYear((previous) => ({
-      startDate: addYears(previous.startDate, 1),
+      startDate: addDays(previous.endDate, 1),
       endDate: min([addYears(previous.endDate, 1), maxValue(init)]),
     }));
   }, [init]);

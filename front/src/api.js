@@ -1,8 +1,10 @@
 import axios from 'axios';
+import { format } from 'date-fns';
 
 import { API_BASE_URL } from './config';
 
 const AUTH_KEY = 'EOLIEN-TOKEN';
+const DATE_FORMAT = 'yyyy-MM-dd';
 
 export const user = {
   get: () => axios.get(`${API_BASE_URL}/user`),
@@ -29,11 +31,19 @@ export const password = {
 export const windFarm = {
   initialize: () => axios.get(`${API_BASE_URL}/wind_farm/init`),
   status: (sessionId, handle) => axios.get(`${API_BASE_URL}/wind_farm/status`, { params: { sessionId, handle } }),
-  monthlyData: (day) => axios.get(`${API_BASE_URL}/wind_farm/monthly_data`, { params: { day } }),
-  dailyData: (sessionId, day) => axios.get(`${API_BASE_URL}/wind_farm/daily_data`, { params: { sessionId, day } }),
-  yearlyData: (sessionId, startDate, endDate) => (
-    axios.get(`${API_BASE_URL}/wind_farm/yearly_data`, { params: { sessionId, startDate, endDate } })
-  ),
+  monthlyData: (day) => axios.get(`${API_BASE_URL}/wind_farm/monthly_data`, {
+    params: { day: format(day, DATE_FORMAT) },
+  }),
+  dailyData: (sessionId, day) => axios.get(`${API_BASE_URL}/wind_farm/daily_data`, {
+    params: { sessionId, day: format(day, DATE_FORMAT) },
+  }),
+  yearlyData: (sessionId, startDate, endDate) => axios.get(`${API_BASE_URL}/wind_farm/yearly_data`, {
+    params: {
+      sessionId,
+      startDate: format(startDate, DATE_FORMAT),
+      endDate: format(endDate, DATE_FORMAT),
+    },
+  }),
 };
 
 export const setAuthorization = (authorization, rememberMe) => {

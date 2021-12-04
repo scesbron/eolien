@@ -47,8 +47,8 @@ module Api
                 .where('day <= ?', @day.end_of_month)
                 .group(:day)
                 .order(:day)
-                .pluck('day, sum(production - consumption)')
-                .map{|day, value| [day, value || 0]}
+                .pluck(:day, DailyDatum.arel_table[:production].sum, DailyDatum.arel_table[:consumption].sum)
+                .map{|day, production, consumption| [day, (production || 0) - (consumption || 0)]}
       render json: {
         productibles: productibles,
         labels: @data.map{ |datum| I18n.l(datum[0], format: :day) },
@@ -68,8 +68,8 @@ module Api
                .where('day <= ?', @end_date)
                .group('1,2')
                .order('2,1')
-               .pluck('extract (month from day), extract (year from day), sum(production - consumption)')
-               .map{|value| [I18n.t("date.month_names")[value.first], value.last]}
+               .pluck(DailyDatum.arel_table[:day].month, DailyDatum.arel_table[:day].year, DailyDatum.arel_table[:production].sum, DailyDatum.arel_table[:consumption].sum)
+               .map{|month, _, production, consumption| [I18n.t("date.month_names")[month], (production || 0) - (consumption || 0)]}
       labels = data.map(&:first)
       render json: {
         labels: labels,

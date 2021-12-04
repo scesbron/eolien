@@ -10,6 +10,7 @@ gem 'rails'
 gem 'rexml'
 
 gem 'active_model_serializers'
+gem 'arel_extensions'
 gem 'attr_encrypted'
 gem 'devise'
 gem 'devise-jwt'

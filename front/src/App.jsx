@@ -5,8 +5,6 @@ import {
 import BottomNavigation from '@material-ui/core/BottomNavigation';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 import BarChartIcon from '@material-ui/icons/BarChart';
-import PersonIcon from '@material-ui/icons/Person';
-import EuroIcon from '@material-ui/icons/Euro';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -16,9 +14,7 @@ import PrivateRoute from './routes/private-route';
 import Login from './containers/login';
 import { userType } from './types';
 import Home from './containers/home';
-import Profile from './containers/profile';
 import * as userDuck from './ducks/user';
-import Investment from './containers/investment';
 import ForgottenPassword from './containers/forgotten-password';
 import { FORGOTTEN_PASSWORD, LOGIN, NEW_PASSWORD } from './constants/routes';
 import NewPassword from './containers/new-password';
@@ -77,12 +73,6 @@ function App({ user, logout }) {
         <Route path={NEW_PASSWORD}>
           <NewPassword />
         </Route>
-        <PrivateRoute path="/profil">
-          <Profile />
-        </PrivateRoute>
-        <PrivateRoute path="/investissement">
-          <Investment />
-        </PrivateRoute>
         <PrivateRoute path="/">
           <Home />
         </PrivateRoute>
@@ -99,18 +89,6 @@ function App({ user, logout }) {
             label="Production"
             value="home"
             icon={<BarChartIcon />}
-          />
-          <BottomNavigationAction
-            to="/profil"
-            label="Profil"
-            value="profile"
-            icon={<PersonIcon />}
-          />
-          <BottomNavigationAction
-            to="/investissement"
-            label="Investissement"
-            value="investment"
-            icon={<EuroIcon />}
           />
           <BottomNavigationAction
             to="/logout"
