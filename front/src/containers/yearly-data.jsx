@@ -14,7 +14,7 @@ import {
 
 import { initType, requestType, yearlyDataType } from '../types';
 import * as duck from '../ducks/wind-farm';
-import { formatDate } from '../utils/date';
+import { format } from '../utils/date';
 import Loader from '../components/loader';
 
 const StyledContainer = styled(Container)`
@@ -85,7 +85,7 @@ const YearlyData = ({ init, yearlyData, getYearlyData }) => {
     if (init.success) {
       const endDate = maxValue(init);
       setYear({
-        startDate: startOfYear(endDate),
+        startDate: max([init.value.minDate, startOfYear(endDate)]),
         endDate,
       });
     }
@@ -112,13 +112,13 @@ const YearlyData = ({ init, yearlyData, getYearlyData }) => {
   if (!year) return null;
 
   const lastYear = isEqual(maxValue(init), year.endDate);
-  const firstYear = isEqual(init.value.minDate, year.startDate);
+  const firstYear = init.value.minDate.year === year.startDate.year;
 
   return (
     <StyledContainer disableGutters>
       <Header>
         <IconButton onClick={onPrevious} disabled={firstYear}><ArrowBackIosIcon /></IconButton>
-        <Typography variant="h5">{`Du ${formatDate(year.startDate)} au ${formatDate(year.endDate)}`}</Typography>
+        <Typography variant="h5">{format(year.startDate, 'yyyy')}</Typography>
         <IconButton onClick={onNext} disabled={lastYear}><ArrowForwardIosIcon /></IconButton>
       </Header>
       {yearlyData.onGoing && (<Loader />)}

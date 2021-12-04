@@ -56,3 +56,20 @@ Je pense que c'est mieux d'avoir une application mono parc que l'on instancie pl
 - simplifier les dépendances : passer à du redux classique voir utiliser react query et / ou recoil
 - utiliser typescript
 - voir s'il y a quelque chose de plus simple que material ui que je pourrais utiliser comme base pour les composants
+
+## Mauges eole
+
+```ruby
+Productible.create(month: 1, name: 'Objectif', value: 2386000.0)
+Productible.create(month: 2, name: 'Objectif', value: 2335000.0)
+Productible.create(month: 3, name: 'Objectif', value: 2058000.0)
+Productible.create(month: 4, name: 'Objectif', value: 1699000.0)
+Productible.create(month: 5, name: 'Objectif', value: 1460000.0)
+Productible.create(month: 6, name: 'Objectif', value: 1230000.0)
+Productible.create(month: 7, name: 'Objectif', value: 1246000.0)
+Productible.create(month: 8, name: 'Objectif', value: 1135000.0)
+Productible.create(month: 9, name: 'Objectif', value: 1310000.0)
+Productible.create(month: 10, name: 'Objectif', value: 1720000.0)
+Productible.create(month: 11, name: 'Objectif', value: 2143000.0)
+Productible.create(month: 12, name: 'Objectif', value: 2455000.0)
+```
