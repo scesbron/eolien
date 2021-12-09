@@ -15,4 +15,6 @@ test:
 
 production:
   <<: *default
-  database: <%= ENV['DATABASE_NAME'] %>_production
+  database: <%= ENV['DATABASE_NAME'] %>
+  host: <%= ENV['DATABASE_HOST'] %>
+  port: <%= ENV['DATABASE_PORT'] %>
