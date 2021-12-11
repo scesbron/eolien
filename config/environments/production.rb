@@ -119,7 +119,7 @@ Rails.application.configure do
 
   config.middleware.insert_before 0, Rack::Cors do
     allow do
-      origins 'app.hyrome.fr', 'app.maugeseole.fr'
+      origins 'app.hyrome.fr', 'http://app.maugeseole.fr'
       resource '*', headers: :any, methods: [:get, :post, :put, :patch, :delete, :options, :head], expose: ["Authorization"]
     end
   end
