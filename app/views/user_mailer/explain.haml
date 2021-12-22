@@ -20,7 +20,7 @@
   et en indiquant votre nom d'utilisateur puis en cliquant sur le bouton "Envoyez-moi les instructions de réinitialisation".
 %p
   Si vous avez des difficultés à vous connecter à l'application vous pouvez nous contacter en nous envoyant un mail à l'adresse
-  = link_to 'contact@eo-lien.fr', 'mailto:contact@eo-lien.fr'
+  = link_to ENV['MAILER_SENDER'], "mailto:#{ENV['MAILER_SENDER']}"
 %p
   Cordialement
   %br
