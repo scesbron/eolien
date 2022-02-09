@@ -1,12 +1,12 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '3.0.2'
+ruby '3.1.0'
 
 gem 'bootsnap', require: false
 gem 'pg'
 gem 'puma'
-gem 'rails'
+gem 'rails', '~> 6.1'
 gem 'rexml'
 
 gem 'active_model_serializers'
