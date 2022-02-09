@@ -111,7 +111,7 @@ module Scada
       }
     end
 
-    def self.post(url, body, timeout: 10)
+    def self.post(url, body, timeout: 5)
       Typhoeus.post(
         url,
         body: body,
