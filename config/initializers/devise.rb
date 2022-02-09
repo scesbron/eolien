@@ -1,5 +1,17 @@
 # frozen_string_literal: true
 
+class CustomFailureApp < Devise::FailureApp
+  def respond
+    json_error_response
+  end
+
+  def json_error_response
+    self.status = 401
+    self.content_type = 'application/json'
+    self.response_body = { errors: [i18n_message] }.to_json
+  end
+end
+
 # Use this hook to configure devise mailer, warden hooks and so forth.
 # Many of these configuration options can be set straight in your model.
 Devise.setup do |config|
