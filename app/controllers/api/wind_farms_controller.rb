@@ -28,13 +28,17 @@ module Api
       end_time = start_time + 24.hours
       wind_farm = current_user.company.wind_farm
       data = wind_farm.wind_turbines.ordered_by_number.enabled.map do |turbine|
-        turbine_data = Scada::Api.turbine_ten_minutes_values(params[:sessionId], turbine, start_time, end_time)
-        {
-          name: turbine.name,
-          labels: turbine_data.map { |datum| datum.time.localtime.min.zero? ? datum.time.localtime.strftime('%H') : '' },
-          power: turbine_data.map(&:active_power),
-          wind_speed: turbine_data.map(&:wind_speed)
-        }
+        begin
+          turbine_data = Scada::Api.turbine_ten_minutes_values(params[:sessionId], turbine, start_time, end_time)
+          {
+            name: turbine.name,
+            labels: turbine_data.map { |datum| datum.time.localtime.min.zero? ? datum.time.localtime.strftime('%H') : '' },
+            power: turbine_data.map(&:active_power),
+            wind_speed: turbine_data.map(&:wind_speed)
+          }
+        rescue
+          Rails.logger.error "Impossible to get data for turbine #{turbine.name}"
+        end
       end
       render json: data
     end
