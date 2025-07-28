@@ -37,15 +37,19 @@ class SendRealTimeDataToTraderJob < ApplicationJob
     CSV.generate(headers: true, col_sep: ';', encoding: Encoding::UTF_8) do |csv|
       csv << headers
       wind_farm.wind_turbines.ordered_by_number.enabled.each do |wind_turbine|
-        Scada::Api.turbine_ten_minutes_values(session_id, wind_turbine, start_time, end_time).reverse.each do |value|
-          csv << [
-            value.time.utc.strftime(DATE_FORMAT),
-            format('E%<number>02d', number: wind_turbine.number),
-            value.active_power,
-            value.operating_state,
-            value.wind_speed,
-            value.wind_direction
-          ]
+        begin
+          Scada::Api.turbine_ten_minutes_values(session_id, wind_turbine, start_time, end_time).reverse.each do |value|
+            csv << [
+              value.time.utc.strftime(DATE_FORMAT),
+              format('E%<number>02d', number: wind_turbine.number),
+              value.active_power,
+              value.operating_state,
+              value.wind_speed,
+              value.wind_direction
+            ]
+          end
+        rescue
+          Rails.logger.error "Impossible to get data for turbine #{wind_turbine.name}"
         end
       end
     end
